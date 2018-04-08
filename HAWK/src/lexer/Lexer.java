@@ -15,19 +15,62 @@ public class Lexer {
 	}
 	
 	private void reserveKeywords() {
+		//conditional operators
+		reserve(Keyword.AND);
+		reserve(Keyword.OR);
+		
+		//equality and relational operators
+		reserve(Keyword.ASSIGNMENT);
+		reserve(Keyword.EQUAL);
+		reserve(Keyword.NOTEQUAL);
+		reserve(Keyword.GREATER);
+		reserve(Keyword.LESS);
+		reserve(Keyword.GE);
+		reserve(Keyword.LE);
+		
+		//conditional statements
+		reserve(Keyword.IF);
+		reserve(Keyword.ELSE);
+		reserve(Keyword.ELSEIF);
+		reserve(Keyword.INCASE);
+		reserve(Keyword.IS);
+		
+		//loop statements
+		reserve(Keyword.FOR);
+		reserve(Keyword.DO);
+		reserve(Keyword.WHILE);
+		reserve(Keyword.REPEAT);
+		reserve(Keyword.TIMES);
+		reserve(Keyword.BREAK);
+		
+		//boolean
 		reserve(Keyword.FALSE);
 		reserve(Keyword.TRUE);
 		
-		reserve(Keyword.DO);
-		reserve(Keyword.WHILE);
-		reserve(Keyword.IF);
-		reserve(Keyword.ELSE);
-		reserve(Keyword.BREAK);
+		//arithmetic operators
+		reserve(Keyword.ADD);
+		reserve(Keyword.SUB);
+		reserve(Keyword.MUL);
+		reserve(Keyword.DIV);
+		reserve(Keyword.EXP);
+		reserve(Keyword.MOD);
 		
+		//unary operators
+		reserve(Keyword.POS);
+		reserve(Keyword.NEGATIVE);
+		reserve(Keyword.INC);
+		reserve(Keyword.DEC);
+		reserve(Keyword.NEGATION);
+		
+		//data types
 		reserve(Type.BOOLEAN);
 		reserve(Type.CHAR);
 		reserve(Type.FLOAT);
 		reserve(Type.INT);
+		
+		//others
+		reserve(Keyword.NULL);
+		reserve(Keyword.VOID);
 	}
 	
 	public Lexer() {
@@ -75,13 +118,13 @@ public class Lexer {
 				}
 			case '>':
 				if(read('=')) {
-					return Keyword.G_EQUAL;
+					return Keyword.GE;
 				} else {
 					return new Token('>');
 				}
 			case '<':
 				if(read('=')) {
-					return Keyword.L_EQUAL;
+					return Keyword.LE;
 				} else {
 					return new Token('<');
 				}

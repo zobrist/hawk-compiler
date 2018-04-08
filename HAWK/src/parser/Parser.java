@@ -154,7 +154,7 @@ public class Parser {
 	
 	private void equality() throws IOException {
 		rel();
-		while(look.tag == Tag.EQ || look.tag == Tag.NE) {
+		while(look.tag == Tag.EQUAL || look.tag == Tag.NOTEQUAL) {
 			move();
 			rel();
 		}
