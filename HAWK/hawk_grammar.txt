@@ -1,0 +1,34 @@
+<if_statement> -> if(<condition>) "{" <statement> "}" [else [if(<condition>)] "{" <statement> "}"]
+<do_while_statement> -> do "{" <statement> "}" while"("<condition>");"
+<repeat_statement> -> repeat"("<expression>") times "{"<statement>"}"
+<while_stmt> -> while(<condition>) "{" <statement> "}"
+<incase> -> incase(<condition>) "{" <case>"}"
+<case> -> {<is_case>} default <statement> break;
+<is_case> -> is <condition> then <statement> break;
+  
+<single_line_comment> -> "#"(<statement> | <expression>)
+<multi_line_comment> -> "#(" (<statement> | <expression>) ")#"
+  
+<declaration> -> <data_type> <initial>
+<assignment> -> (<declaration> "=" <expression> | <initial> "=" <expression>)
+<method_declaration> -> (<data_type> | "void") <initial>"("<declaration>") {" {<statement>} "}"
+<method_call> -> <initial>"("{<variable>}")"
+<printing> -> (print <expression>";" | println <expression>";")
+<program_skeleton> -> program <uppercase><initial> "{" void main"() {" {<statement>";"} exit";" "}" }"
+  
+<condition> -> (<unary_operators> <expression> | <expression> [((<conditional> | <equality_relational> | <binary_operators>) <expression> | <unary_operators>)])[<conditional><condition>]
+<expression> -> (<initial> | <number>)
+<number> -> <value>[<number>]
+<value> -> ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9")
+<initial> -> <lowercase><variable>
+<variable> -> {<variable>}(<value> | <uppercase> | <lowercase>)
+<uppercase> -> ("A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z")
+<lowercase> -> ("a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z")
+<data_type> -> ("int" | "char" | "string" | "float" | "long" | "double")
+  
+<conditional> -> ("&&" | "||")
+<equality_relational> -> ("<" | "<=" | ">" | ">=" | "==" | "!=")
+<unary_operators> -> ("+" | "-" | "++" | "--" | "!")
+<binary_operators> -> ("+" | "-" | "*" | "/" | "**" | "%")
+  
+<statement> -> {<statement>}(<if_statement> | <do_while_statement> | <repeat_statement> | <condition> | <while_stmt> | <case> ){<statement>}
