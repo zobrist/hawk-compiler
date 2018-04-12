@@ -64,4 +64,5 @@ public class Tag {
 	public final static int DEFAULT = 424;
 	public final static int RETURN = 425;
 	public final static int EXIT = 426;
+	public final static int GET = 427;
 }

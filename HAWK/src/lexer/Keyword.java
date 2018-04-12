@@ -49,4 +49,5 @@ public class Keyword extends Token {
 	public static final Keyword DEFAULT = new Keyword("default", Tag.DEFAULT);
 	public static final Keyword RETURN = new Keyword("return", Tag.RETURN);
 	public static final Keyword EXIT = new Keyword("exit", Tag.EXIT);
+	public static final Keyword GET = new Keyword("get", Tag.GET);
 }
