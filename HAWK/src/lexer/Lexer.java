@@ -70,7 +70,24 @@ public class Lexer {
 				//continue
 			} else if(peek == '\n') {
 				line = line + 1;
-				System.out.println("New line detected");
+			} else if(peek == '#') {
+				if(peek == '(') {
+					// continue
+					for(;;read()) {
+						if(peek == ')') {
+							read();
+							if(peek == '#') {
+								break;
+							}
+						}
+					}
+				} else {
+					for(;; read()) {
+						if(peek == '\n') {
+							break;
+						}
+					}
+				}
 			} else {
 				break;
 			}
