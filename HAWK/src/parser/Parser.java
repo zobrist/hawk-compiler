@@ -43,6 +43,7 @@ public class Parser {
 	
 	private void block() throws IOException {
 		match('{');
+		
 		match('}');
 	}
 
