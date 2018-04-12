@@ -45,16 +45,67 @@ public class Parser {
 		match('{');
 		match('}');
 	}
-	
-	/*private void decls() throws IOException {
-		while(look.tag == Tag.BASIC_TYPE) {
-			type();
+
+	private void declaration() throws IOException {
+		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move();
 			match(Tag.ID);
 			match(';');
+		}else if(look.tag == ';'){
+			move();
 		}
 	}
 	
-	private void type() throws IOException {
+	private void if_statements() throws IOException{
+		if(look.tag == Tag.IF){
+			move();
+			match('(');
+			condition();
+			match(')');
+			block();
+			if(look.tag == Tag.ELSIF){
+				elseif_statements();
+			}else if(look.tag == Tag.ELSE){
+				else_statements();
+			}
+		}
+	}
+	
+	private void elsif_statements() throws IOException{
+		if(look.tag == Tag.ELSIF){
+			move();
+			match('(');
+			condition();
+			match(')');
+			block();
+			if(look.tag == Tag.ELSIF){
+				elsif_statements();
+			}else if(look.tag == Tag.ELSE){
+				else_statements();
+			}
+		}
+	}
+	
+	private void else_statements() throws IOException{
+		if(look.tag == Tag.ELSE){
+			move();
+			block();
+		}
+	}
+	
+	private void incase_statement() throws IOException{
+		if(look.tag == Tag.INCASE){
+			match(Tag.INCASE);
+			match('(');
+			condition();
+			match(')');
+			match('{');
+			case_statements();
+			match('}');
+		}
+	}
+	
+	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);
 		if(look.tag == '[') {
 			dims();
@@ -70,7 +121,7 @@ public class Parser {
 		}
 	}
 	
-	private void stmts() throws IOException {
+	/*private void stmts() throws IOException {
 		if(look.tag == '}') {
 			
 		} else {
