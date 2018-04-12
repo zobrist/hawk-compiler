@@ -32,7 +32,7 @@ public class Parser {
 	}
 
 	private void error(String s) {
-		throw new Error("near line " + lexer.line + " : " + s);
+//		throw new Error("near line " + lexer.line + " : " + s);
 	}
 
 	public void start() throws IOException {
@@ -44,17 +44,28 @@ public class Parser {
 		match(Tag.ID);
 		block();
 	}
-
+	
 	private void block() throws IOException {
-		match('{');
-			statements();
-		match('}');
-		
 		if(look.tag == '{') {
+			match('{');
 			block();
+			statements();
 		}
 	}
-
+	
+	
+	private void declarations() throws IOException{
+		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move();
+			match(Tag.ID);
+			if(look.tag == '='){
+				assignment();
+			}else if(look.tag == ';'){
+				declaration();
+			}
+		}
+	}
+	
 	private void declaration() throws IOException {
 		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
 			move();
@@ -67,7 +78,7 @@ public class Parser {
 	
 	private void statements() throws IOException {
 		if(look.tag == '}') {
-			
+			match('}');
 		} else {
 			statement();
 			statements();
@@ -80,13 +91,13 @@ public class Parser {
 			move();
 			return;
 		case Tag.IF:
-	//		if_statement();
+			if_statements();
 			return;
 		case Tag.DO:
 			do_while_statement();
 			return;
 		case Tag.WHILE:
-	//		while_statement();
+			while_statement();
 			return;
 		case Tag.REPEAT:
 			repeat_statement();
@@ -98,9 +109,7 @@ public class Parser {
 		case Tag.NUM:
 		case Tag.STRING_TYPE:
 		case Tag.REAL:
-			declaration();
-		case Tag.ASSIGNMENT:
-			assignment();
+			declarations();
 			return;
 //		case Tag.ME:
 //			repeat_statement();
@@ -150,7 +159,7 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-			match(')');
+//			match(')');
 			block();
 			if(look.tag == Tag.ELSIF){
 				elsif_statements();
@@ -165,8 +174,9 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-			match(')');
+//			match(')');
 			block();
+//			match('}');
 			if(look.tag == Tag.ELSIF){
 				elsif_statements();
 			}else if(look.tag == Tag.ELSE){
@@ -224,18 +234,19 @@ public class Parser {
 			expression();
 			equality_relational();
 			expression();
-			if(look.tag != ';'){
+			if(look.tag != ')'){
 				conditional_operators();
 				condition();
-				match(';');
+			}else{
+				match(')');
 			}
-		}																		//kulang pa hin kun boolean an iya gininput
+		}																//kulang pa hin kun boolean an iya gininput
 	}
 	
 	public void conditional_operators() throws IOException{
 		if(look.tag == Tag.AND){
 			match(Tag.AND);
-		}else{
+		}else if(look.tag == Tag.OR){
 			match(Tag.OR);
 		}
 	}
@@ -251,20 +262,20 @@ public class Parser {
 			match(Tag.LESS);
 		}else if(look.tag == Tag.GE){
 			match(Tag.GE);
-		}else{
+		}else if(look.tag == Tag.LE){
 			match(Tag.LE);
 		}
 	}
 	
 	public void assignment() throws IOException{
-		if(look.tag == Tag.STRING_TYPE || look.tag == Tag.BASIC_TYPE ){
+		if(look.tag == Tag.STRING_TYPE || look.tag == Tag.BASIC_TYPE){
 			type();
 			match(Tag.ID);
 			match('=');
 			expression();
 			match(';');
 		}else{
-			match(Tag.ID);
+//			match(Tag.ID);
 			match('=');
 			expression();
 			match(';');
