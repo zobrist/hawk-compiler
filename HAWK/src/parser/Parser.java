@@ -47,7 +47,6 @@ public class Parser {
 
 	private void block() throws IOException {
 		match('{');
-
 		match('}');
 	}
 
@@ -76,13 +75,13 @@ public class Parser {
 			move();
 			return;
 		case Tag.IF:
-			if_statement();
+	//		if_statement();
 			return;
 		case Tag.DO:
 			do_while_statement();
 			return;
 		case Tag.WHILE:
-			while_statement();
+	//		while_statement();
 			return;
 		case Tag.REPEAT:
 			repeat_statement();
@@ -175,11 +174,92 @@ public class Parser {
 			condition();
 			match(')');
 			match('{');
-			case_statements();
+	//		case_statements();
 			match('}');
 		}
 	}
+	
+	
 
+	public void condition() throws IOException{
+		if(look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL) {   //if eveer may string, butngi hin string
+			expression();
+			equality_relational();
+			expression();
+			if(look.tag != ';'){
+				conditional_operators();
+				condition();
+				match(';');
+			}
+		}																		//kulang pa hin kun boolean an iya gininput
+	}
+	
+	public void conditional_operators() throws IOException{
+		if(look.tag == Tag.AND){
+			match(Tag.AND);
+		}else{
+			match(Tag.OR);
+		}
+	}
+	
+	public void equality_relational() throws IOException{
+		if(look.tag == Tag.EQUAL){
+			match(Tag.EQUAL);
+		}else if(look.tag == Tag.NOTEQUAL){
+			match(Tag.NOTEQUAL);
+		}else if(look.tag == Tag.GREATER){
+			match(Tag.GREATER);
+		}else if(look.tag == Tag.LESS){
+			match(Tag.LESS);
+		}else if(look.tag == Tag.GE){
+			match(Tag.GE);
+		}else{
+			match(Tag.LE);
+		}
+	}
+	
+	public void assignment() throws IOException{
+		if(look.tag == Tag.STRING_TYPE || look.tag == Tag.BASIC_TYPE ){
+			type();
+			match(Tag.ID);
+			match('=');
+			expression();
+			match(';');
+		}else{
+			match(Tag.ID);
+			match('=');
+			expression();
+			match(';');
+		}
+		
+	}
+	
+	public void repeat_statement() throws IOException{
+		match(Tag.REPEAT);
+		match('(');
+		expression();
+		match(')');
+		match(Tag.TIMES);
+		block();
+	}
+	
+	public void expression() throws IOException{
+		move();
+	}
+	
+	private void type() throws IOException {
+		if(look.tag == Tag.NUM){
+			match(Tag.NUM);			
+		}else if(look.tag == Tag.REAL){
+			match(Tag.REAL);
+		}else if(look.tag == Tag.STRING_TYPE){
+			match(Tag.STRING_TYPE);
+		}else{
+			match(Tag.BASIC_TYPE);
+		}
+		
+	}
+	
 	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);
 		if(look.tag == '[') {

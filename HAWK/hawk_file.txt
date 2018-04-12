@@ -1,4 +1,6 @@
 program Name
 {
-
+	repeat(10)times{
+	nckd
+	}
 }	
