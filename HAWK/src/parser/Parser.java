@@ -16,6 +16,10 @@ public class Parser {
 
 	private void move() throws IOException {
 		look = lexer.scan();
+		if(look.tag == Tag.ID && look.lexeme.length() > 32)
+		{
+			error("Syntax Error: identifier greater than 32 characters");
+		}
 		System.out.println(look.lexeme);
 	}
 
@@ -54,6 +58,76 @@ public class Parser {
 			match(';');
 		}else if(look.tag == ';'){
 			move();
+		}
+	}
+	
+	private void statements() throws IOException {
+		if(look.tag == '}') {
+			
+		} else {
+			statement();
+			statements();
+		}
+	}
+	
+	private void statement() throws IOException {
+		switch(look.tag) {
+		case ';':
+			move();
+			return;
+		case Tag.IF:
+			if_statement();
+			return;
+		case Tag.DO:
+			do_while_statement();
+			return;
+		case Tag.WHILE:
+			while_statement();
+			return;
+		case Tag.REPEAT:
+			repeat_statement();
+			return;
+		case Tag.INCASE:
+			incase_statement();
+			return;
+		case Tag.BASIC_TYPE:
+		case Tag.NUM:
+		case Tag.STRING_TYPE:
+		case Tag.REAL:
+			declaration();
+		case Tag.ASSIGNMENT:
+			assignment();
+			return;
+//		case Tag.ME:
+//			repeat_statement();
+//			return;
+//
+//Method call
+//print
+//scan
+//		case Tag.BREAK:
+//			match(Tag.BREAK);
+//			match(';');
+//			return;
+//		case '{':
+//			block();
+//			return;
+		default:
+//			assign();
+		}
+		
+	}
+	
+	private void do_while_statement() throws IOException {
+		if(look.tag == Tag.DO)
+		{
+			move();
+			block();
+			match(Tag.WHILE);
+			match('(');
+			condition();
+			match(')');
+			match(';');
 		}
 	}
 
