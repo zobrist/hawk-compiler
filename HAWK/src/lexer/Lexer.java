@@ -49,6 +49,8 @@ public class Lexer {
 	
 	private void read() throws IOException {
 		peek = (char) System.in.read();
+		if(peek == '\n')
+			System.out.println("New line detected");
 	}
 	
 	private boolean read(char c) throws IOException {
@@ -68,6 +70,7 @@ public class Lexer {
 				//continue
 			} else if(peek == '\n') {
 				line = line + 1;
+				System.out.println("New line detected");
 			} else {
 				break;
 			}
@@ -78,31 +81,31 @@ public class Lexer {
 				if(read('&')) {
 					return Keyword.AND;
 				} else {
-					return new Token('&');
+					return new Token('&', "&");
 				}
 			case '|':
 				if(read('|')) {
 					return Keyword.OR;
 				} else {
-					return new Token('|');
+					return new Token('|', "||");
 				}
 			case '>':
 				if(read('=')) {
 					return Keyword.GE;
 				} else {
-					return new Token('>');
+					return new Token('>', ">");
 				}
 			case '<':
 				if(read('=')) {
 					return Keyword.LE;
 				} else {
-					return new Token('<');
+					return new Token('<', "<");
 				}
 			case '=':
 				if(read('=')) {
 					return Keyword.EQUAL;
 				} else {
-					return new Token('=');
+					return new Token('=', "=");
 				}
 		}
 		
@@ -114,7 +117,7 @@ public class Lexer {
 			} while(Character.isDigit(peek));
 			
 			if(peek != '.') {
-				return new Num(v);
+				return new Num(v, ""+v);
 			}
 			
 			float x = v, d = 10;
@@ -126,7 +129,7 @@ public class Lexer {
 				x = x + Character.digit(peek, 10) / d;
 				d = d*10;
 			}
-			return new Real(x);
+			return new Real(x, ""+x);
 		}
 		
 		if(Character.isLetter((int) peek)) {
@@ -143,7 +146,7 @@ public class Lexer {
 			return new Keyword(s, Tag.ID);
 		}
 		
-		Token t = new Token(peek);
+		Token t = new Token(peek, ""+peek);
 		peek = ' ';
 		return t;
 	}

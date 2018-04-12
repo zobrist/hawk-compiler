@@ -4,7 +4,7 @@ public class Keyword extends Token {
 	public final String lexeme;
 	
 	public Keyword(String lexeme, int tag) {
-		super(tag);
+		super(tag, lexeme);
 		this.lexeme = lexeme;
 	}
 	

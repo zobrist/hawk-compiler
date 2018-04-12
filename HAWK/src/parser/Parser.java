@@ -16,7 +16,7 @@ public class Parser {
 	
 	private void move() throws IOException {
 		look = lexer.scan();
-		System.out.println(look.tag);
+		System.out.println(look.lexeme);
 	}
 	
 	private void match(int t) throws IOException {
@@ -43,12 +43,10 @@ public class Parser {
 	
 	private void block() throws IOException {
 		match('{');
-		decls();
-		stmts();
 		match('}');
 	}
 	
-	private void decls() throws IOException {
+	/*private void decls() throws IOException {
 		while(look.tag == Tag.BASIC_TYPE) {
 			type();
 			match(Tag.ID);
@@ -246,5 +244,5 @@ public class Parser {
 			bool();
 			match(']');
 		}
-	}
+	}*/
 }
