@@ -1,4 +1,4 @@
-#single line comment
-#(
-program Name {
-})#
+program Name
+{
+
+}	

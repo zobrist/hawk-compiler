@@ -58,6 +58,10 @@ public class Tag {
 	public final static int ID = 418;
 	public final static int NIL = 419;
 	public final static int VOID = 420;
-	public final static int TEMP = 421;
-	public final static int PROGRAM = 422;
+	public final static int PROGRAM = 421;
+	public final static int FUNC = 422;
+	public final static int THEN = 423;
+	public final static int DEFAULT = 424;
+	public final static int RETURN = 425;
+	public final static int EXIT = 426;
 }

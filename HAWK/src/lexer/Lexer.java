@@ -41,6 +41,8 @@ public class Lexer {
 		reserve(Type.INT);
 		reserve(Keyword.STRING);
 		reserve(Keyword.PROGRAM);
+		reserve(Keyword.NIL);
+		reserve(Keyword.FUNC);
 	}
 	
 	public Lexer() {
@@ -160,6 +162,16 @@ public class Lexer {
 				return w;
 			}
 			return new Keyword(s, Tag.ID);
+		}
+		
+		if(peek == '\"') {
+			StringBuilder b = new StringBuilder();
+			do {
+				b.append(peek);
+				read();
+			} while(peek != '\"');
+			String s = b.toString();
+			return new Token(Tag.STRING_TYPE, s);
 		}
 		
 		Token t = new Token(peek, ""+peek);

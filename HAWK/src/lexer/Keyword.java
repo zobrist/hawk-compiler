@@ -43,5 +43,10 @@ public class Keyword extends Token {
 	//null
 	public static final Keyword NIL = new Keyword("nil", Tag.NIL);
 	public static final Keyword STRING = new Keyword("string", Tag.STRING_TYPE);
-	
+	public static final Keyword FUNC = new Keyword("func", Tag.FUNC);
+	public static final Keyword VOID = new Keyword("void", Tag.VOID);
+	public static final Keyword THEN = new Keyword("then", Tag.THEN);
+	public static final Keyword DEFAULT = new Keyword("default", Tag.DEFAULT);
+	public static final Keyword RETURN = new Keyword("return", Tag.RETURN);
+	public static final Keyword EXIT = new Keyword("exit", Tag.EXIT);
 }
