@@ -49,8 +49,6 @@ public class Lexer {
 	
 	private void read() throws IOException {
 		peek = (char) System.in.read();
-		if(peek == '\n')
-			System.out.println("New line detected");
 	}
 	
 	private boolean read(char c) throws IOException {
@@ -68,9 +66,10 @@ public class Lexer {
 		for(;; read()) {
 			if(peek == ' ' || peek == '\t') {
 				//continue
-			} else if(peek == '\n') {
+			} else if(peek == '\n' || peek == '\r') {
 				line = line + 1;
 			} else if(peek == '#') {
+				read();
 				if(peek == '(') {
 					// continue
 					for(;;read()) {
@@ -83,7 +82,7 @@ public class Lexer {
 					}
 				} else {
 					for(;; read()) {
-						if(peek == '\n') {
+						if(peek == '\n' || peek == '\r') {
 							break;
 						}
 					}
