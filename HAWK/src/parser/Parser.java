@@ -8,17 +8,17 @@ import lexer.Token;
 public class Parser {
 	private final Lexer lexer;
 	private Token look;
-	
+
 	public Parser(Lexer lexer) throws IOException {
 		this.lexer = lexer;
 		move();
 	}
-	
+
 	private void move() throws IOException {
 		look = lexer.scan();
 		System.out.println(look.lexeme);
 	}
-	
+
 	private void match(int t) throws IOException {
 		if(look.tag == t) {
 			move();
@@ -26,24 +26,24 @@ public class Parser {
 			error("Syntax Error");
 		}
 	}
-	
+
 	private void error(String s) {
 		throw new Error("near line " + lexer.line + " : " + s);
 	}
-	
+
 	public void start() throws IOException {
 		program();
 	}
-	
+
 	private void program() throws IOException {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
 		block();
 	}
-	
+
 	private void block() throws IOException {
 		match('{');
-		
+
 		match('}');
 	}
 
@@ -56,7 +56,7 @@ public class Parser {
 			move();
 		}
 	}
-	
+
 	private void if_statements() throws IOException{
 		if(look.tag == Tag.IF){
 			move();
@@ -65,13 +65,13 @@ public class Parser {
 			match(')');
 			block();
 			if(look.tag == Tag.ELSIF){
-				elseif_statements();
+				elsif_statements();
 			}else if(look.tag == Tag.ELSE){
 				else_statements();
 			}
 		}
 	}
-	
+
 	private void elsif_statements() throws IOException{
 		if(look.tag == Tag.ELSIF){
 			move();
@@ -86,14 +86,14 @@ public class Parser {
 			}
 		}
 	}
-	
+
 	private void else_statements() throws IOException{
 		if(look.tag == Tag.ELSE){
 			move();
 			block();
 		}
 	}
-	
+
 	private void incase_statement() throws IOException{
 		if(look.tag == Tag.INCASE){
 			match(Tag.INCASE);
@@ -105,14 +105,14 @@ public class Parser {
 			match('}');
 		}
 	}
-	
+
 	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);
 		if(look.tag == '[') {
 			dims();
 		}
 	}
-	
+
 	private void dims() throws IOException {
 		match('[');
 		match(Tag.NUM);
@@ -121,16 +121,16 @@ public class Parser {
 			dims();
 		}
 	}
-	
+
 	/*private void stmts() throws IOException {
 		if(look.tag == '}') {
-			
+
 		} else {
 			stmt();
 			stmts();
 		}
 	}
-	
+
 	private void stmt() throws IOException {
 		switch(look.tag) {
 			case ';':
@@ -175,7 +175,7 @@ public class Parser {
 				assign();
 		}
 	}
-	
+
 	private void assign() throws IOException {
 		match(Tag.ID);
 		if(look.tag == '=') {
@@ -188,7 +188,7 @@ public class Parser {
 		}
 		match(';');
 	}
-	
+
 	private void bool() throws IOException {
 		join();
 		while(look.tag == Tag.OR) {
@@ -196,7 +196,7 @@ public class Parser {
 			join();
 		}
 	}
-	
+
 	private void join() throws IOException {
 		equality();
 		while(look.tag == Tag.AND) {
@@ -204,7 +204,7 @@ public class Parser {
 			equality();
 		}
 	}
-	
+
 	private void equality() throws IOException {
 		rel();
 		while(look.tag == Tag.EQUAL || look.tag == Tag.NOTEQUAL) {
@@ -212,7 +212,7 @@ public class Parser {
 			rel();
 		}
 	}
-	
+
 	public void rel() throws IOException {
 		expr();
 		switch(look.tag) {
@@ -226,7 +226,7 @@ public class Parser {
 			default:
 		}
 	}
-	
+
 	private void expr() throws IOException {
 		term();
 		while(look.tag == '+' || look.tag == '-') {
@@ -234,7 +234,7 @@ public class Parser {
 			term();
 		}
 	}
-	
+
 	private void term() throws IOException {
 		unary();
 		while(look.tag == '*' || look.tag == '/') {
@@ -242,7 +242,7 @@ public class Parser {
 			unary();
 		}
 	}
-	
+
 	private void unary() throws IOException {
 		if(look.tag == '-') {
 			move();
@@ -254,7 +254,7 @@ public class Parser {
 			factor();
 		}
 	}
-	
+
 	private void factor() throws IOException {
 		switch(look.tag) {
 			case '(':
@@ -277,7 +277,7 @@ public class Parser {
 			case Tag.ID:
 				move();
 				if(look.tag != '[') {
-					
+
 				} else {
 					offset();
 				}
@@ -286,7 +286,7 @@ public class Parser {
 				error("Syntax error");
 		}
 	}
-	
+
 	private void offset() throws IOException {
 		match('[');
 		bool();
