@@ -47,7 +47,12 @@ public class Parser {
 
 	private void block() throws IOException {
 		match('{');
+			statements();
 		match('}');
+		
+		if(look.tag == '{') {
+			block();
+		}
 	}
 
 	private void declaration() throws IOException {
@@ -129,6 +134,16 @@ public class Parser {
 			match(';');
 		}
 	}
+	
+	public void while_statement() throws IOException {
+		if(look.tag == Tag.WHILE){
+			move();
+			match('(');
+			condition();
+			match(')');
+			block();
+		}
+	}
 
 	private void if_statements() throws IOException{
 		if(look.tag == Tag.IF){
@@ -174,13 +189,36 @@ public class Parser {
 			condition();
 			match(')');
 			match('{');
-	//		case_statements();
+			case_statements();
 			match('}');
 		}
 	}
 	
+	public void case_statements() throws IOException {
+		if(look.tag == Tag.IS){
+			match('(');
+			condition();
+			match(')');
+			match(Tag.THEN);
+			statements();
+			
+			move();
+			if(look.tag == Tag.BREAK){
+				match(Tag.BREAK);
+				match(';');
+			}
+			
+			move();
+			if(look.tag == Tag.DEFAULT){
+				match(Tag.DEFAULT);
+				match(';');
+				statements();
+			}else{
+				case_statements();
+			}
+		}
+	}
 	
-
 	public void condition() throws IOException{
 		if(look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL) {   //if eveer may string, butngi hin string
 			expression();
