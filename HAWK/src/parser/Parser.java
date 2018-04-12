@@ -16,6 +16,7 @@ public class Parser {
 	
 	private void move() throws IOException {
 		look = lexer.scan();
+		System.out.println(look.tag);
 	}
 	
 	private void match(int t) throws IOException {
@@ -35,6 +36,8 @@ public class Parser {
 	}
 	
 	private void program() throws IOException {
+		match(Tag.PROGRAM);
+		match(Tag.ID);
 		block();
 	}
 	

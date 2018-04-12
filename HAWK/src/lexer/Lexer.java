@@ -15,23 +15,10 @@ public class Lexer {
 	}
 	
 	private void reserveKeywords() {
-		//conditional operators
-		reserve(Keyword.AND);
-		reserve(Keyword.OR);
-		
-		//equality and relational operators
-		reserve(Keyword.ASSIGNMENT);
-		reserve(Keyword.EQUAL);
-		reserve(Keyword.NOTEQUAL);
-		reserve(Keyword.GREATER);
-		reserve(Keyword.LESS);
-		reserve(Keyword.GE);
-		reserve(Keyword.LE);
-		
 		//conditional statements
 		reserve(Keyword.IF);
 		reserve(Keyword.ELSE);
-		reserve(Keyword.ELSEIF);
+		reserve(Keyword.ELSIF);
 		reserve(Keyword.INCASE);
 		reserve(Keyword.IS);
 		
@@ -47,30 +34,13 @@ public class Lexer {
 		reserve(Keyword.FALSE);
 		reserve(Keyword.TRUE);
 		
-		//arithmetic operators
-		reserve(Keyword.ADD);
-		reserve(Keyword.SUB);
-		reserve(Keyword.MUL);
-		reserve(Keyword.DIV);
-		reserve(Keyword.EXP);
-		reserve(Keyword.MOD);
-		
-		//unary operators
-		reserve(Keyword.POS);
-		reserve(Keyword.NEGATIVE);
-		reserve(Keyword.INC);
-		reserve(Keyword.DEC);
-		reserve(Keyword.NEGATION);
-		
 		//data types
 		reserve(Type.BOOLEAN);
 		reserve(Type.CHAR);
 		reserve(Type.FLOAT);
 		reserve(Type.INT);
-		
-		//others
-		reserve(Keyword.NULL);
-		reserve(Keyword.VOID);
+		reserve(Keyword.STRING);
+		reserve(Keyword.PROGRAM);
 	}
 	
 	public Lexer() {

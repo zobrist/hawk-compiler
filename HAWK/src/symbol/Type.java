@@ -6,8 +6,8 @@ import lexer.Tag;
 public class Type extends Keyword {
 	public final int width;
 	
-	public Type(String lexeme, int tag, int width) {
-		super(lexeme, tag);
+	public Type(java.lang.String string, int tag, int width) {
+		super(string, tag);
 		this.width = width;
 	}
 	

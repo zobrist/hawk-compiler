@@ -8,23 +8,23 @@ public class Keyword extends Token {
 		this.lexeme = lexeme;
 	}
 	
+	//start
+	public static final Keyword PROGRAM = new Keyword("program", Tag.PROGRAM);
+	
 	//conditional operators
 	public static final Keyword AND = new Keyword("&&", Tag.AND),
 			OR = new Keyword("||", Tag.OR);
 			
 	//equality and relational operators
-	public static final Keyword LESS = new Keyword("<", Tag.LESS),
-			LE = new Keyword("<=", Tag.LE),
-			GREATER = new Keyword(">", Tag.GREATER),
+	public static final Keyword LE = new Keyword("<=", Tag.LE),
 			GE = new Keyword(">=", Tag.GE),
-			ASSIGNMENT = new Keyword("=", Tag.ASSIGNMENT),
 			EQUAL = new Keyword("==", Tag.EQUAL),
 			NOTEQUAL = new Keyword("!=", Tag.NOTEQUAL);
 	
 	//conditional statements
 	public static final Keyword IF = new Keyword("if", Tag.IF),
 			ELSE = new Keyword("else", Tag.ELSE),
-			ELSEIF = new Keyword("elseif", Tag.ELSEIF),
+			ELSIF = new Keyword("elsif", Tag.ELSIF),
 			INCASE = new Keyword("incase", Tag.INCASE),
 			IS = new Keyword("is", Tag.IS);
 	
@@ -40,23 +40,8 @@ public class Keyword extends Token {
 	public static final Keyword TRUE = new Keyword("true", Tag.TRUE),
 			FALSE = new Keyword("false", Tag.FALSE);
 	
-	//arithmetic operators
-	public static final Keyword ADD = new Keyword("+", Tag.ADD),
-			SUB = new Keyword("-", Tag.SUB),
-			MUL = new Keyword("*", Tag.MUL),
-			DIV = new Keyword("/", Tag.DIV),
-			EXP = new Keyword("**", Tag.EXP),
-			MOD = new Keyword("%", Tag.MOD);
+	//null
+	public static final Keyword NIL = new Keyword("nil", Tag.NIL);
+	public static final Keyword STRING = new Keyword("string", Tag.STRING_TYPE);
 	
-	//unary operators
-	public static final Keyword POS = new Keyword("+", Tag.POS),
-			NEGATIVE = new Keyword("-", Tag.NEGATIVE),
-			INC = new Keyword("++", Tag.INC),
-			DEC = new Keyword("--", Tag.DEC),
-			NEGATION = new Keyword("!", Tag.NEGATION);
-	
-	//others
-	public static final Keyword NULL = new Keyword("null", Tag.NULL),
-			VOID = new Keyword("void", Tag.VOID);
-
 }
