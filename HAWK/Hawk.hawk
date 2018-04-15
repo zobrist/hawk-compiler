@@ -1,4 +1,15 @@
 program Hawk
 {
-incase(){}
+if(i <= 2 && i >= 9){
+	if(i == 2){
+		if(i > 2){
+		
+		}elsif(i < 0){
+		
+		}
+	}
+}
+else{
+
+}
 }
