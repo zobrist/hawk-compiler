@@ -49,7 +49,7 @@ public class Parser {
 		if(look.tag == '{') {
 			match('{');
 			block();
-			condition();
+			statements();
 		}
 	}
 	
@@ -159,7 +159,7 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-//			match(')');
+			match(')');
 			block();
 			if(look.tag == Tag.ELSIF){
 				elsif_statements();
