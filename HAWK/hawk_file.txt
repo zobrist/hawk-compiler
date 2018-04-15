@@ -1,6 +1,6 @@
 program Name
 {
-	if((a+2)>=3){
+	if(a+2>=3){
 	 int a = 0;
 	}
 }	

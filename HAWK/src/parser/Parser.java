@@ -159,7 +159,7 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-			match(')');
+			match(')');  //here!!!!
 			block();
 			if(look.tag == Tag.ELSIF){
 				elsif_statements();
@@ -174,7 +174,7 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-//			match(')');
+		//	match(')');
 			block();
 //			match('}');
 			if(look.tag == Tag.ELSIF){
@@ -256,8 +256,6 @@ public class Parser {
 			if(look.tag != ')'){
 				conditional_operators();
 				condition();
-			}else{
-				match(')');
 			}
 		}																//kulang pa hin kun boolean an iya gininput
 	}
