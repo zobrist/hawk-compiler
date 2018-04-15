@@ -47,7 +47,7 @@ public class Parser {
 
 	private void block() throws IOException {
 		match('{');
-			statements();
+			condition();
 		match('}');
 		
 		if(look.tag == '{') {
@@ -80,7 +80,7 @@ public class Parser {
 			move();
 			return;
 		case Tag.IF:
-	//		if_statement();
+			//if_statement();
 			return;
 		case Tag.DO:
 			do_while_statement();
@@ -220,16 +220,34 @@ public class Parser {
 	}
 	
 	public void condition() throws IOException{
-		if(look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL) {   //if eveer may string, butngi hin string
+		boolean parenthesis;
+		if(look.tag == '('){
+			parenthesis = true;
+			move();
+			expression();
+			if(look.tag == ')'){
+				move();
+				parenthesis = false;
+			}
+			equality_relational();
+			expression();
+			if(look.tag == Tag.AND ||look.tag == Tag.OR){
+				move();
+				condition();
+			}																	//kulang pa hin kun boolean an iya gininput
+			if(parenthesis){
+				match(')');
+				parenthesis = false;
+			}
+		}else{
 			expression();
 			equality_relational();
 			expression();
-			if(look.tag != ';'){
-				conditional_operators();
+			if(look.tag == Tag.AND ||look.tag == Tag.OR){
+				move();
 				condition();
-				match(';');
-			}
-		}																		//kulang pa hin kun boolean an iya gininput
+			}	
+		}
 	}
 	
 	public void conditional_operators() throws IOException{
@@ -282,10 +300,25 @@ public class Parser {
 	}
 	
 	public void expression() throws IOException{
-		move();
+		if(look.tag == '('){
+			move();
+			expression();
+			match(')');
+			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
+				move();
+				expression();
+			}
+		}else{
+			move();
+			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
+				move();
+				expression();
+			}
+		}
+		
 	}
 	
-	private void type() throws IOException {
+	public void type() throws IOException {
 		if(look.tag == Tag.NUM){
 			match(Tag.NUM);			
 		}else if(look.tag == Tag.REAL){
@@ -297,6 +330,7 @@ public class Parser {
 		}
 		
 	}
+	
 	
 	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);

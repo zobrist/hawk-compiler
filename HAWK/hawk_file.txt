@@ -1,6 +1,4 @@
 program Name
 {
-	repeat(10)times{
-	nckd
-	}
+	(a+2)>=3
 }	
