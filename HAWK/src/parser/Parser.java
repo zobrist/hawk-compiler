@@ -184,7 +184,8 @@ public class Parser {
 			}
 		}
 	}
-
+	
+	
 	private void else_statements() throws IOException{
 		if(look.tag == Tag.ELSE){
 			move();
@@ -341,6 +342,34 @@ public class Parser {
 		
 	}
 	
+	
+	public void param_ids() throws IOException {
+		match(Tag.ID);
+		if(look.tag == ',')
+		{
+			param_ids();
+		} else {
+			return;
+		}
+	}
+	
+	public void scan_statement() throws IOException {
+		match(Tag.GET);
+		switch(look.tag)
+		{
+			case Tag.BASIC_TYPE:
+				return;
+			case Tag.NUM:
+				return;
+			case Tag.REAL:
+				return;
+			case Tag.STRING_TYPE:
+				return;
+			default:
+				error("Syntax error");
+				
+		}
+	}
 	
 	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);
