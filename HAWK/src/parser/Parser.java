@@ -119,6 +119,12 @@ public class Parser {
 		case Tag.REAL:
 			declarations();
 			return;
+		case Tag.PRINT:
+			print();
+			return;
+		case Tag.GET:
+			get();
+			return;
 //		case Tag.ME:
 //			repeat_statement();
 //			return;
@@ -137,6 +143,51 @@ public class Parser {
 //			assign();
 		}
 		
+	}
+	
+	//needs to be checked pa
+	private void method_call() throws IOException{
+		if(look.tag == Tag.ID) {
+			move();
+			match('(');
+			if(look.tag == Tag.ID) {
+				param_ids();
+			}
+			match(')');
+		}
+	}
+	
+	private void print_params() throws IOException{
+		if(look.tag == Tag.STRING_TYPE) {
+			move();
+			if(look.tag == '+') {
+				print_params();
+			}
+		}else {
+			expression();
+			if(look.tag == '+') {
+				print_params();
+			}
+		}
+	}
+	
+	private void print() throws IOException{
+		if(look.tag == Tag.PRINT) {
+			move();
+			print_params();
+			match(';');
+		}
+	}
+	
+	private void get() throws IOException{
+		if(look.tag == Tag.GET) {
+			move();
+			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.STRING_TYPE) {
+				match(';');
+			}else {
+				error("Syntax Error");
+			}
+		}
 	}
 	
 	private void for_loop() throws IOException {

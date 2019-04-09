@@ -183,7 +183,13 @@ public class Lexer {
 			if(w != null) {
 				return w;
 			}
-			return new Keyword(s, Tag.ID);
+			if(s.equals("print")) {
+				return new Keyword(s, Tag.PRINT);
+			}else if(s.equals("get")) {
+				return new Keyword(s, Tag.GET);
+			}else {
+				return new Keyword(s, Tag.ID);				
+			}
 		}
 		
 		if(peek == '\"') {
@@ -192,9 +198,11 @@ public class Lexer {
 				b.append(peek);
 				read();
 			} while(peek != '\"');
+			read();
 			String s = b.toString();
 			return new Token(Tag.STRING_TYPE, s);
 		}
+		
 		
 		Token t = new Token(peek, ""+peek);
 		peek = ' ';
