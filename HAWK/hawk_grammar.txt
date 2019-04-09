@@ -1,5 +1,6 @@
 <if_statement> -> if(<condition>) "{" <statement> "}" [else [if(<condition>)] "{" <statement> "}"]
 <do_while_statement> -> do "{" <statement> "}" while"("<condition>");"
+<for_loop> -> for(<assignment> ";" <condition> ";" <update>)"{" <statement> "}" 
 <repeat_statement> -> repeat"("<expression>") times "{"<statement>"}"
 <while_stmt> -> while(<condition>) "{" <statement> "}"
 <incase> -> incase(<condition>) "{" <case>"}"
@@ -17,7 +18,7 @@
 <program_skeleton> -> program <uppercase><initial> "{" void main"() {" {<statement>";"} exit";" "}" }"
   
 <condition> -> (<unary_operators> <expression> | <expression> [((<conditional> | <equality_relational> | <binary_operators>) <expression> | <unary_operators>)])[<conditional><condition>]
-<expression> -> (<initial> | <number>)
+<expression> -> (<initial>[unary] | <number>)
 <number> -> <value>[<number>]
 <value> -> ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9")
 <initial> -> <lowercase><variable>

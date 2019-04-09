@@ -1,15 +1,16 @@
-program Hawk
-{
-if(i <= 2 && i >= 9){
-	if(i == 2){
-		if(i > 2){
-		
-		}elsif(i < 0){
-		
+program Hawk{
+
+	for(int i = 0; i < 2; i+=2){
+		if(i <= 2 && i >= 9){
+			if(i == 2){
+				if(i > 2){
+			
+				}elsif(i < 0){
+			
+				}
+			}
+		}
+		else{
 		}
 	}
-}
-else{
-
-}
 }
