@@ -1,6 +1,11 @@
 package lexer;
 
 public class Tag {
+	
+	/**
+	 * assigns numeric values to each keyword 
+	 */
+	
 	//conditional operators
 	public final static int AND = 300;
 	public final static int OR = 301;

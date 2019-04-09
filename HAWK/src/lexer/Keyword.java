@@ -2,7 +2,11 @@ package lexer;
 
 public class Keyword extends Token {
 	public final String lexeme;
-	
+	/**
+	 * creates an object of the keyword (lexeme) with its associated numerical tag
+	 * @param lexeme
+	 * @param tag
+	 */
 	public Keyword(String lexeme, int tag) {
 		super(tag, lexeme);
 		this.lexeme = lexeme;
