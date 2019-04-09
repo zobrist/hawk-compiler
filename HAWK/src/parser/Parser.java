@@ -61,6 +61,7 @@ public class Parser {
 			if(look.tag == '='){
 				assignment();
 			}else if(look.tag == ';'){
+				move();
 				declaration();
 			}
 		}
@@ -73,6 +74,10 @@ public class Parser {
 			match(';');
 		}else if(look.tag == ';'){
 			move();
+			declaration();
+		}else if(look.tag == Tag.ID) {
+			move();
+			declaration();
 		}
 	}
 	
@@ -92,6 +97,9 @@ public class Parser {
 			return;
 		case Tag.IF:
 			if_statements();
+			return;
+		case Tag.FOR:
+			for_loop();
 			return;
 		case Tag.DO:
 			do_while_statement();
@@ -129,6 +137,20 @@ public class Parser {
 //			assign();
 		}
 		
+	}
+	
+	private void for_loop() throws IOException {
+		if(look.tag == Tag.FOR) {
+			move();
+			match('(');
+			assignment();
+			match(';');
+			condition();
+			match(';');
+			expression();
+			match(')');
+			block();
+		}
 	}
 	
 	private void do_while_statement() throws IOException {

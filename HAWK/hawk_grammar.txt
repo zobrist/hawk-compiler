@@ -1,5 +1,6 @@
 <if_statement> -> if(<condition>) "{" <statement> "}" [else [if(<condition>)] "{" <statement> "}"]
 <do_while_statement> -> do "{" <statement> "}" while"("<condition>");"
+<for_loop> -> for(<assignment> ";" <condition> ";" <update>)"{" <statement> "}" 
 <repeat_statement> -> repeat"("<expression>") times "{"<statement>"}"
 <while_stmt> -> while(<condition>) "{" <statement> "}"
 <incase> -> incase(<condition>) "{" <case>"}"
@@ -17,10 +18,10 @@
 <program_skeleton> -> program <uppercase><initial> "{" void main"() {" {<statement>";"} exit";" "}" }"
   
 <condition> -> (<unary_operators> <expression> | <expression> [((<conditional> | <equality_relational> | <binary_operators>) <expression> | <unary_operators>)])[<conditional><condition>]
-<expression> -> (<initial> | <number>)
+<expression> -> (<initial>[unary] | <number>)
 <number> -> <value>[<number>]
 <value> -> ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9")
-<initial> -> <lowercase><variable>
+<initial> -> <lowercase><variable>["," <variable>]
 <variable> -> {<variable>}(<value> | <uppercase> | <lowercase>)
 <uppercase> -> ("A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z")
 <lowercase> -> ("a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z")
