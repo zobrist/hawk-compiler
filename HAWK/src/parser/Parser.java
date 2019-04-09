@@ -61,6 +61,7 @@ public class Parser {
 			if(look.tag == '='){
 				assignment();
 			}else if(look.tag == ';'){
+				move();
 				declaration();
 			}
 		}
@@ -73,6 +74,10 @@ public class Parser {
 			match(';');
 		}else if(look.tag == ';'){
 			move();
+			declaration();
+		}else if(look.tag == Tag.ID) {
+			move();
+			declaration();
 		}
 	}
 	
