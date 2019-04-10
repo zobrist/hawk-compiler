@@ -55,4 +55,5 @@ public class Keyword extends Token {
 	public static final Keyword EXIT = new Keyword("exit", Tag.EXIT);
 	public static final Keyword GET = new Keyword("get", Tag.GET);
 	public static final Keyword PRINT = new Keyword("print", Tag.PRINT);
+	public static final Keyword NUM = new Keyword("int", Tag.NUM);
 }
