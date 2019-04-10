@@ -10,6 +10,8 @@ public class Parser {
 	private Token look;
 
 	private boolean EOFEncountered = false;
+	private boolean mainEncountered = false;
+	
 	
 	public Parser(Lexer lexer) throws IOException {
 		this.lexer = lexer;
@@ -22,7 +24,6 @@ public class Parser {
 		{
 			error("Syntax Error: identifier greater than 32 characters");
 		}
-		System.out.println(look.lexeme);
 	}
 
 	private void match(int t) throws IOException {
@@ -31,6 +32,7 @@ public class Parser {
 		} else {
 			error("Syntax Error");
 		}
+		System.out.println(look.lexeme);
 	}
 
 	private void error(String s) {
@@ -48,15 +50,20 @@ public class Parser {
 	}
 	
 	private void body() throws IOException{
+		boolean isExit = false;
 		match('{');
 		while(true)
 		{
 			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE)
 				declarations();
+				
 			else if(look.tag == Tag.VOID) {
 				method_declaration();
 			}
-			if(EOFEncountered) {
+			else {
+				break;
+			}
+			if(EOFEncountered || isExit) {
 				break;
 			}
 		}
@@ -79,6 +86,7 @@ public class Parser {
 		} else {
 			statements();
 		}
+		//match('}');
 	}
 	
 	private void method_params() throws IOException {
@@ -95,8 +103,20 @@ public class Parser {
 	
 	private void declarations() throws IOException{
 		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			int type = look.tag;
 			move(); //should be something that records datatypes
 			match(Tag.ID); //should be something that records names
+			//System.out.println("lexeme:"+look.lexeme);
+			//System.out.println(look.tag + " sdfs " + Tag.NUM);
+			//System.out.println(mainEncountered);
+			//System.out.println("lexeme:"+look.lexeme);
+			if(look.lexeme.equals("main")) {
+				if(look.tag == Tag.NUM && !mainEncountered){
+					mainEncountered = true;
+				} else {
+					error("int main method already invoked!");
+				}
+			}
 		}//else if (look.tag == Tag.ID) {
 		//	match(Tag.ID);
 		//} this should not be possible
@@ -130,7 +150,9 @@ public class Parser {
 	}
 	
 	private void statements() throws IOException {
+		
 		if(look.tag == '}') {
+			match('}');
 			return;
 		} else {
 			statement();
@@ -188,6 +210,7 @@ public class Parser {
 //			block();
 //			return;
 		default:
+			return;
 //			assign();
 		}
 		
@@ -432,7 +455,17 @@ public class Parser {
 	}
 	
 	public void expression() throws IOException{
-		if(look.tag == '('){
+		
+		if(look.tag == '\'') {
+			move();
+			match(Tag.ID);
+			move();
+		}else if(look.tag == '\"'){
+			//System.out.println("qwertyui");
+			match('\"');
+			match(Tag.ID);
+			match('\"');
+		} else if(look.tag == '('){
 			move();
 			expression();
 			match(')');
@@ -440,7 +473,7 @@ public class Parser {
 				move();
 				expression();
 			}
-		}else{
+		} else {
 			move();
 			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
 				move();
