@@ -1,6 +1,14 @@
 program Name
 {
-	if(a+2>=3){
-	 int a = 0;
+	int main()
+	{
+		if(a+2>=3){
+		int a = 0;
+		}
+	}
+	
+	int main(){
+		char d = 'ss';
+		string aerol = "asdadasd";
 	}
 }	

@@ -1,6 +1,11 @@
 package lexer;
 
 public class Tag {
+	
+	/**
+	 * assigns numeric values to each keyword 
+	 */
+	
 	//conditional operators
 	public final static int AND = 300;
 	public final static int OR = 301;
@@ -65,4 +70,5 @@ public class Tag {
 	public final static int RETURN = 425;
 	public final static int EXIT = 426;
 	public final static int GET = 427;
+	public final static int PRINT = 428;
 }

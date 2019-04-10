@@ -43,16 +43,29 @@ public class Lexer {
 		reserve(Keyword.PROGRAM);
 		reserve(Keyword.NIL);
 		reserve(Keyword.FUNC);
+		reserve(Keyword.VOID);
 	}
 	
 	public Lexer() {
 		reserveKeywords();
 	}
 	
+	/**
+	 * reads a character and it becomes the current value for peek
+	 * @throws IOException
+	 */
 	private void read() throws IOException {
 		peek = (char) System.in.read();
 	}
 	
+	/**
+	 * checks if the current character being read is equal to c
+	 * if not, it returns false
+	 * otherwise, it sets peek to ' ' and return true
+	 * @param c
+	 * @return
+	 * @throws IOException
+	 */
 	private boolean read(char c) throws IOException {
 		read();
 		
@@ -66,13 +79,19 @@ public class Lexer {
 	
 	public Token scan() throws IOException {
 		for(;; read()) {
+			
 			if(peek == ' ' || peek == '\t') {
 				//continue
 			} else if(peek == '\n' || peek == '\r') {
+				
 				line = line + 1;
 			} else if(peek == '#') {
+				/*
+				 * comments
+				 * skips those inside the "#()#"
+				 */
 				read();
-				if(peek == '(') {
+				if(peek == '(') {                                                                
 					// continue
 					for(;;read()) {
 						if(peek == ')') {
@@ -95,12 +114,14 @@ public class Lexer {
 		}
 		
 		switch(peek) {
+			
 			case '&':
 				if(read('&')) {
 					return Keyword.AND;
 				} else {
 					return new Token('&', "&");
 				}
+			
 			case '|':
 				if(read('|')) {
 					return Keyword.OR;
@@ -127,6 +148,7 @@ public class Lexer {
 				}
 		}
 		
+		//will return a digit or a double
 		if(Character.isDigit(peek)) {
 			int v = 0;
 			do {
@@ -150,6 +172,7 @@ public class Lexer {
 			return new Real(x, ""+x);
 		}
 		
+		//will return keyword for variable name
 		if(Character.isLetter((int) peek)) {
 			StringBuilder b = new StringBuilder();
 			do {
@@ -161,18 +184,44 @@ public class Lexer {
 			if(w != null) {
 				return w;
 			}
-			return new Keyword(s, Tag.ID);
+			if(s.equals("print")) {
+				return new Keyword(s, Tag.PRINT);
+			}else if(s.equals("get")) {
+				return new Keyword(s, Tag.GET);
+			}else {
+				return new Keyword(s, Tag.ID);				
+			}
 		}
 		
 		if(peek == '\"') {
 			StringBuilder b = new StringBuilder();
 			do {
+				if(peek == '\"') {
+					read();
+				}
 				b.append(peek);
+				
 				read();
 			} while(peek != '\"');
+			read();
 			String s = b.toString();
 			return new Token(Tag.STRING_TYPE, s);
 		}
+		
+		if(peek == '\'') {
+			StringBuilder b = new StringBuilder();
+			do {
+				if(peek == '\'') {
+					read();
+				}
+				b.append(peek);
+				read();
+			} while(peek != '\'');
+			read();
+			String s = b.toString();
+			return new Token(Tag.STRING_TYPE, s);
+		}
+		
 		
 		Token t = new Token(peek, ""+peek);
 		peek = ' ';
