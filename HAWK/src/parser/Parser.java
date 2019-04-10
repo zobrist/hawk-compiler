@@ -9,6 +9,8 @@ public class Parser {
 	private final Lexer lexer;
 	private Token look;
 
+	private boolean EOFEncountered = false;
+	
 	public Parser(Lexer lexer) throws IOException {
 		this.lexer = lexer;
 		move();
@@ -32,7 +34,7 @@ public class Parser {
 	}
 
 	private void error(String s) {
-//		throw new Error("near line " + lexer.line + " : " + s);
+		throw new Error("near line " + lexer.line + " : " + s);
 	}
 
 	public void start() throws IOException {
@@ -42,6 +44,29 @@ public class Parser {
 	private void program() throws IOException {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
+		body();
+	}
+	
+	private void body() throws IOException{
+		match('{');
+		while(true)
+		{
+			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE)
+				declarations();
+			else if(look.tag == Tag.VOID) {
+				method_declaration();
+			}
+			if(EOFEncountered) {
+				break;
+			}
+		}
+		match('}');
+	}
+	
+	private void method_declaration() throws IOException{
+		match('(');
+		method_params();
+		match(')');
 		block();
 	}
 	
@@ -49,41 +74,64 @@ public class Parser {
 		if(look.tag == '{') {
 			match('{');
 			block();
+		} else if(look.tag == '}') {
+			return;
+		} else {
 			statements();
+		}
+	}
+	
+	private void method_params() throws IOException {
+		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move(); //to skip the data_type symbol
+			match(Tag.ID);
+			if(look.tag == ','){
+				move();
+				method_params();
+			}
 		}
 	}
 	
 	
 	private void declarations() throws IOException{
 		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move(); //should be something that records datatypes
+			match(Tag.ID); //should be something that records names
+		}//else if (look.tag == Tag.ID) {
+		//	match(Tag.ID);
+		//} this should not be possible
+		
+		if(look.tag == '='){
+			assignment();
+		}else if(look.tag == ','){
+			declaration();
+		}else if(look.tag == '(') {
+			method_declaration();
+		}else if(look.tag == ';'){
 			move();
-			match(Tag.ID);
-			if(look.tag == '='){
-				assignment();
-			}else if(look.tag == ';'){
-				move();
-				declaration();
-			}
+		}else{
+			EOFEncountered = true;
+			return;
 		}
 	}
 	
 	private void declaration() throws IOException {
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			move();
-			match(Tag.ID);
-			match(';');
+		move(); //to skip the , symbol
+		match(Tag.ID);
+		
+		if(look.tag == ','){
+			declaration();
 		}else if(look.tag == ';'){
 			move();
 			declaration();
-		}else if(look.tag == Tag.ID) {
-			move();
-			declaration();
+		}else if(look.tag == '=') {
+			assignment();
 		}
 	}
 	
 	private void statements() throws IOException {
 		if(look.tag == '}') {
-			match('}');
+			return;
 		} else {
 			statement();
 			statements();

@@ -43,6 +43,7 @@ public class Lexer {
 		reserve(Keyword.PROGRAM);
 		reserve(Keyword.NIL);
 		reserve(Keyword.FUNC);
+		reserve(Keyword.VOID);
 	}
 	
 	public Lexer() {
