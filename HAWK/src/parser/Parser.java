@@ -16,6 +16,7 @@ public class Parser {
 	public Parser(Lexer lexer) throws IOException {
 		this.lexer = lexer;
 		move();
+//		System.out.println(look.lexeme);
 	}
 
 	private void move() throws IOException {
@@ -24,6 +25,7 @@ public class Parser {
 		{
 			error("Syntax Error: identifier greater than 32 characters");
 		}
+		System.out.println(look.lexeme);
 	}
 
 	private void match(int t) throws IOException {
@@ -32,11 +34,11 @@ public class Parser {
 		} else {
 			error("Syntax Error");
 		}
-		System.out.println(look.lexeme);
+		//System.out.println(look.lexeme);
 	}
 
 	private void error(String s) {
-		throw new Error("near line " + lexer.line + " : " + s);
+		throw new Error("Compiler error near line " + lexer.line + " : " + s);
 	}
 
 	public void start() throws IOException {
@@ -104,17 +106,15 @@ public class Parser {
 	private void declarations() throws IOException{
 		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
 			int type = look.tag;
+			//System.out.println("Type Lexeme: " + look.lexeme);
 			move(); //should be something that records datatypes
+			String prevLexeme = look.lexeme;
 			match(Tag.ID); //should be something that records names
-			//System.out.println("lexeme:"+look.lexeme);
-			//System.out.println(look.tag + " sdfs " + Tag.NUM);
-			//System.out.println(mainEncountered);
-			//System.out.println("lexeme:"+look.lexeme);
-			if(look.lexeme.equals("main")) {
-				if(look.tag == Tag.NUM && !mainEncountered){
-					mainEncountered = true;
-				} else {
+			if(prevLexeme.equals("main")) {
+				if(type == Tag.BASIC_TYPE && mainEncountered){
 					error("int main method already invoked!");
+				} else {
+					mainEncountered = true;
 				}
 			}
 		}//else if (look.tag == Tag.ID) {
