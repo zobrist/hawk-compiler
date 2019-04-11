@@ -30,7 +30,7 @@ public class Parser {
 			error("Syntax Error");
 		}
 	}
-
+	
 	private void error(String s) {
 //		throw new Error("near line " + lexer.line + " : " + s);
 	}
@@ -42,52 +42,27 @@ public class Parser {
 	private void program() throws IOException {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
-		block();
+		match('{');
+		declarations();
+		body();
+		match('}');
+	}
+	
+	private void body() throws IOException{
+		method_declaration();
+		declaration();
+		body();
 	}
 	
 	private void block() throws IOException {
-		if(look.tag == '{') {
-			match('{');
-			block();
-			statements();
-		}
-	}
-	
-	
-	private void declarations() throws IOException{
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			move();
-			match(Tag.ID);
-			if(look.tag == '='){
-				assignment();
-			}else if(look.tag == ';'){
-				move();
-				declaration();
-			}
-		}
-	}
-	
-	private void declaration() throws IOException {
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			move();
-			match(Tag.ID);
-			match(';');
-		}else if(look.tag == ';'){
-			move();
-			declaration();
-		}else if(look.tag == Tag.ID) {
-			move();
-			declaration();
-		}
+		match('{');
+		statements();
+		match('}');
 	}
 	
 	private void statements() throws IOException {
-		if(look.tag == '}') {
-			match('}');
-		} else {
-			statement();
-			statements();
-		}
+		statement();
+		statements();
 	}
 	
 	private void statement() throws IOException {
@@ -122,9 +97,7 @@ public class Parser {
 		case Tag.PRINT:
 			print();
 			return;
-		case Tag.GET:
-			get();
-			return;
+		
 //		case Tag.ME:
 //			repeat_statement();
 //			return;
@@ -145,6 +118,33 @@ public class Parser {
 		
 	}
 	
+	private void declarations() throws IOException{
+		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move();
+			match(Tag.ID);
+			if(look.tag == '='){
+				assignment();
+			}else if(look.tag == ';'){
+				move();
+				declaration();
+			}
+		}
+	}
+	
+	private void declaration() throws IOException {
+		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+			move();
+			match(Tag.ID);
+			match(';');
+		}else if(look.tag == ';'){
+			move();
+			declaration();
+		}else if(look.tag == Tag.ID) {
+			move();
+			declaration();
+		}
+	}
+	
 	//needs to be checked pa
 	private void method_call() throws IOException{
 		if(look.tag == Tag.ID) {
@@ -154,6 +154,50 @@ public class Parser {
 				param_ids();
 			}
 			match(')');
+		}
+	}
+	
+	private void method_declaration() throws IOException{
+		if(look.tag == Tag.VOID) {
+			move();
+			match(Tag.ID);
+			match('(');
+			if(look.tag != ')') {
+				method_params();
+			}
+			match(')');
+			block();
+		}else if(isDataType(look.tag)) {
+			move();
+			match(Tag.ID);
+			match('(');
+			if(look.tag != ')') {
+				method_params();
+			}
+			match(')');
+			match('{');
+			statements();
+			match(Tag.RETURN);
+			if(look.tag != ';') {
+				expression();
+			}
+			match(';');
+		}
+	}
+	
+	private void method_params() throws IOException{
+		if(isDataType(look.tag)) {
+			move();
+			match(Tag.ID);
+			move();
+			if(look.tag == ',') {
+				move();
+				method_params();
+			}else {
+				move();
+			}
+		}else {
+			error("Syntax Error");
 		}
 	}
 	
@@ -172,22 +216,10 @@ public class Parser {
 	}
 	
 	private void print() throws IOException{
-		if(look.tag == Tag.PRINT) {
-			move();
-			print_params();
-			match(';');
-		}
-	}
-	
-	private void get() throws IOException{
-		if(look.tag == Tag.GET) {
-			move();
-			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.STRING_TYPE) {
-				match(';');
-			}else {
-				error("Syntax Error");
-			}
-		}
+		match(Tag.PRINT);
+		move();
+		print_params();
+		match(';');
 	}
 	
 	private void for_loop() throws IOException {
@@ -318,7 +350,7 @@ public class Parser {
 			if(look.tag == Tag.AND ||look.tag == Tag.OR){
 				move();
 				condition();
-			}																	//kulang pa hin kun boolean an iya gininput
+			}														//kulang pa hin kun boolean an iya gininput
 			if(parenthesis){
 				match(')');
 				parenthesis = false;
@@ -331,7 +363,7 @@ public class Parser {
 				conditional_operators();
 				condition();
 			}
-		}																//kulang pa hin kun boolean an iya gininput
+		}															//kulang pa hin kun boolean an iya gininput
 	}
 	
 	public void conditional_operators() throws IOException{
@@ -428,20 +460,18 @@ public class Parser {
 	
 	public void scan_statement() throws IOException {
 		match(Tag.GET);
-		switch(look.tag)
-		{
-			case Tag.BASIC_TYPE:
-				return;
-			case Tag.NUM:
-				return;
-			case Tag.REAL:
-				return;
-			case Tag.STRING_TYPE:
-				return;
-			default:
-				error("Syntax error");
-				
+		if(isDataType(look.tag)) {
+			match(';');
+		}else {
+			error("Syntax Error");
 		}
+	}
+	
+	public boolean isDataType(int tag) {
+		if(tag == Tag.BASIC_TYPE || tag == Tag.NUM || tag == Tag.REAL || tag == Tag.STRING_TYPE) {
+			return true;
+		}
+		return false;
 	}
 	
 	/*private void type() throws IOException {
