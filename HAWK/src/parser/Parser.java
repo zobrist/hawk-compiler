@@ -2,6 +2,8 @@ package parser;
 
 import java.io.IOException;
 import lexer.Lexer;
+import lexer.Num;
+import lexer.Real;
 import lexer.Tag;
 import lexer.Token;
 
@@ -27,6 +29,7 @@ public class Parser {
 		if(look.tag == t) {
 			move();
 		} else {
+			System.out.println("Syntax Error. Dapat di na napatuloy kun may error");
 			error("Syntax Error");
 		}
 	}
@@ -43,7 +46,7 @@ public class Parser {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
 		match('{');
-		declarations();
+		declaration();
 		body();
 		match('}');
 	}
@@ -51,18 +54,25 @@ public class Parser {
 	private void body() throws IOException{
 		method_declaration();
 		declaration();
-		body();
+		//body();
 	}
 	
 	private void block() throws IOException {
 		match('{');
 		statements();
-		match('}');
+		match('{');
 	}
 	
 	private void statements() throws IOException {
-		statement();
-		statements();
+		if(look.tag == '}') {
+			return;
+		}else if(look.tag == Tag.RETURN) {
+			return;
+		}else {
+			statement();
+			statements();
+		}
+		
 	}
 	
 	private void statement() throws IOException {
@@ -92,12 +102,11 @@ public class Parser {
 		case Tag.NUM:
 		case Tag.STRING_TYPE:
 		case Tag.REAL:
-			declarations();
+			declaration();
 			return;
 		case Tag.PRINT:
 			print();
 			return;
-		
 //		case Tag.ME:
 //			repeat_statement();
 //			return;
@@ -118,29 +127,15 @@ public class Parser {
 		
 	}
 	
-	private void declarations() throws IOException{
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+	private void declaration() throws IOException {
+		if(isDataType(look.tag)){
 			move();
 			match(Tag.ID);
-			if(look.tag == '='){
+			if(look.tag == '=') {
 				assignment();
 			}else if(look.tag == ';'){
-				move();
-				declaration();
+				match(';');
 			}
-		}
-	}
-	
-	private void declaration() throws IOException {
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			move();
-			match(Tag.ID);
-			match(';');
-		}else if(look.tag == ';'){
-			move();
-			declaration();
-		}else if(look.tag == Tag.ID) {
-			move();
 			declaration();
 		}
 	}
@@ -155,6 +150,15 @@ public class Parser {
 			}
 			match(')');
 		}
+	}
+	
+	private void return_statement() throws IOException{
+		match(Tag.RETURN);
+		if(look.tag != ';') {
+			expression();
+		}
+		match(';');
+		
 	}
 	
 	private void method_declaration() throws IOException{
@@ -177,11 +181,20 @@ public class Parser {
 			match(')');
 			match('{');
 			statements();
-			match(Tag.RETURN);
-			if(look.tag != ';') {
-				expression();
+			
+			return_statement();
+			match('}');
+		}else if(look.tag == '(') {
+			move();
+			if(look.tag != ')') {
+				method_params();
 			}
-			match(';');
+			match(')');
+			match('{');
+			statements();
+			
+			return_statement();
+			match('}');
 		}
 	}
 	
@@ -207,7 +220,7 @@ public class Parser {
 			if(look.tag == '+') {
 				print_params();
 			}
-		}else {
+		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
 			expression();
 			if(look.tag == '+') {
 				print_params();
@@ -216,7 +229,6 @@ public class Parser {
 	}
 	
 	private void print() throws IOException{
-		match(Tag.PRINT);
 		move();
 		print_params();
 		match(';');
@@ -416,7 +428,9 @@ public class Parser {
 	}
 	
 	public void expression() throws IOException{
+		
 		if(look.tag == '('){
+		
 			move();
 			expression();
 			match(')');
@@ -424,7 +438,7 @@ public class Parser {
 				move();
 				expression();
 			}
-		}else{
+		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
 			move();
 			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
 				move();
