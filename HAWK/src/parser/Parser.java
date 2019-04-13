@@ -46,21 +46,24 @@ public class Parser {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
 		match('{');
-		declaration();
 		body();
 		match('}');
 	}
 	
 	private void body() throws IOException{
-		method_declaration();
+		
 		declaration();
-		//body();
+		method_declaration();
+		if(look.tag != '}') {
+			body();
+		}
+		
 	}
 	
 	private void block() throws IOException {
 		match('{');
 		statements();
-		match('{');
+		match('}');
 	}
 	
 	private void statements() throws IOException {
@@ -162,6 +165,7 @@ public class Parser {
 	}
 	
 	private void method_declaration() throws IOException{
+		
 		if(look.tag == Tag.VOID) {
 			move();
 			match(Tag.ID);
@@ -191,9 +195,10 @@ public class Parser {
 			}
 			match(')');
 			match('{');
-			statements();
 			
+			statements();
 			return_statement();
+			
 			match('}');
 		}
 	}
@@ -214,23 +219,25 @@ public class Parser {
 		}
 	}
 	
-	private void print_params() throws IOException{
+	private void print_or_string_params() throws IOException{
 		if(look.tag == Tag.STRING_TYPE) {
 			move();
 			if(look.tag == '+') {
-				print_params();
+				move();
+				print_or_string_params();
 			}
 		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
-			expression();
+			move();
 			if(look.tag == '+') {
-				print_params();
+				move();
+				print_or_string_params();
 			}
 		}
 	}
 	
 	private void print() throws IOException{
 		move();
-		print_params();
+		print_or_string_params();
 		match(';');
 	}
 	
@@ -407,12 +414,11 @@ public class Parser {
 			type();
 			match(Tag.ID);
 			match('=');
-			expression();
+			print_or_string_params();
 			match(';');
 		}else{
-//			match(Tag.ID);
 			match('=');
-			expression();
+			print_or_string_params();
 			match(';');
 		}
 		
