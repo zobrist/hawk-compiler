@@ -8,6 +8,10 @@ import lexer.Token;
 public class Parser {
 	private final Lexer lexer;
 	private Token look;
+	private int pOpenCounter = 0;
+	private int pCloseCounter = 0;
+	private int bOpenCounter = 0;
+	private int bCloseCounter = 0;
 
 	public Parser(Lexer lexer) throws IOException {
 		this.lexer = lexer;
@@ -20,7 +24,34 @@ public class Parser {
 		{
 			error("Syntax Error: identifier greater than 32 characters");
 		}
+		
 		System.out.println(look.lexeme);
+		checkParentheses(look.lexeme);
+		checkBraces(look.lexeme);
+	}
+	
+	private void checkParentheses(String charac){
+		if(charac.equals("(")){
+			pOpenCounter++;
+		} else if (charac.equals(")")){
+			pCloseCounter++;
+			if(pOpenCounter != pCloseCounter){
+				error("Syntax Error");
+			}
+		}
+	}
+	
+	private void checkBraces(String charac){
+		if(charac.equals("{")){
+			bOpenCounter++;
+		} else if (charac.equals("}")){
+			bCloseCounter++;
+			if(bOpenCounter != bCloseCounter){
+				System.out.println(bOpenCounter);
+				System.out.println(bCloseCounter);
+				error("Syntax Error");
+			}
+		}
 	}
 
 	private void match(int t) throws IOException {
@@ -32,7 +63,7 @@ public class Parser {
 	}
 
 	private void error(String s) {
-//		throw new Error("near line " + lexer.line + " : " + s);
+		throw new Error("near line " + Lexer.errorLine + " : " + s);
 	}
 
 	public void start() throws IOException {
@@ -61,7 +92,6 @@ public class Parser {
 			if(look.tag == '='){
 				assignment();
 			}else if(look.tag == ';'){
-				move();
 				declaration();
 			}
 		}
@@ -74,10 +104,6 @@ public class Parser {
 			match(';');
 		}else if(look.tag == ';'){
 			move();
-			declaration();
-		}else if(look.tag == Tag.ID) {
-			move();
-			declaration();
 		}
 	}
 	
@@ -97,9 +123,6 @@ public class Parser {
 			return;
 		case Tag.IF:
 			if_statements();
-			return;
-		case Tag.FOR:
-			for_loop();
 			return;
 		case Tag.DO:
 			do_while_statement();
@@ -137,20 +160,6 @@ public class Parser {
 //			assign();
 		}
 		
-	}
-	
-	private void for_loop() throws IOException {
-		if(look.tag == Tag.FOR) {
-			move();
-			match('(');
-			assignment();
-			match(';');
-			condition();
-			match(';');
-			expression();
-			match(')');
-			block();
-		}
 	}
 	
 	private void do_while_statement() throws IOException {
@@ -196,7 +205,7 @@ public class Parser {
 			move();
 			match('(');
 			condition();
-		//	match(')');
+			//match(')');
 			block();
 //			match('}');
 			if(look.tag == Tag.ELSIF){

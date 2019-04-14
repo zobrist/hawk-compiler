@@ -8,6 +8,7 @@ import symbol.Type;
 public class Lexer {
 	private Hashtable<String, Keyword> words = new Hashtable<>();
 	public static int line = 1;
+	public static int errorLine = 1;
 	private char peek = ' ';
 	
 	private void reserve(Keyword kword) {
@@ -70,6 +71,9 @@ public class Lexer {
 				//continue
 			} else if(peek == '\n' || peek == '\r') {
 				line = line + 1;
+				if(peek == '\n'){
+					errorLine = errorLine + 1;
+				}
 			} else if(peek == '#') {
 				read();
 				if(peek == '(') {
