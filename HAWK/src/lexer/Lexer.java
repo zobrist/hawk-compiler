@@ -10,6 +10,7 @@ public class Lexer {
 	public static int line = 1;
 	public static int errorLine = 1;
 	private char peek = ' ';
+	private String endFile = "-1";
 	
 	private void reserve(Keyword kword) {
 		words.put(kword.lexeme, kword);

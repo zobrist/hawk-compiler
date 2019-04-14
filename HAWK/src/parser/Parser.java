@@ -26,8 +26,11 @@ public class Parser {
 		}
 		
 		System.out.println(look.lexeme);
-		checkParentheses(look.lexeme);
-		checkBraces(look.lexeme);
+		
+		if(look.lexeme.equals("?")){
+			checkParentheses(look.lexeme);
+			checkBraces(look.lexeme);
+		}
 	}
 	
 	private void checkParentheses(String charac){
