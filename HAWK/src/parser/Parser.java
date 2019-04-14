@@ -110,6 +110,9 @@ public class Parser {
 		case Tag.PRINT:
 			print();
 			return;
+		case Tag.ID:
+			method_call();
+			return;
 //		case Tag.ME:
 //			repeat_statement();
 //			return;
@@ -414,14 +417,34 @@ public class Parser {
 			type();
 			match(Tag.ID);
 			match('=');
-			print_or_string_params();
+			assignment_params();
 			match(';');
 		}else{
 			match('=');
-			print_or_string_params();
+			assignment_params();
 			match(';');
+		}	
+	}
+	
+	public void assignment_params() throws IOException{
+		if(look instanceof Num || look instanceof Real) {
+			expression();
+		}else if(look.tag == Tag.STRING_TYPE) {
+			assignment_string_params();
 		}
-		
+	}
+	
+	public void assignment_string_params() throws IOException{
+		if(look.tag == Tag.STRING_TYPE) {
+			move();
+			if(look.tag == '+') {
+				 move();
+				 assignment_string_params();
+			}
+		}else if(look instanceof Num || look instanceof Real){
+			move();
+			return;
+		}
 	}
 	
 	public void repeat_statement() throws IOException{
