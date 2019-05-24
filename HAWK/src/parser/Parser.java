@@ -1,6 +1,9 @@
 package parser;
 
 import java.io.IOException;
+
+import javax.swing.JTextArea;
+
 import lexer.Lexer;
 import lexer.Tag;
 import lexer.Token;
@@ -12,9 +15,11 @@ public class Parser {
 	private boolean EOFEncountered = false;
 	private boolean mainEncountered = false;
 	
+	private JTextArea terminal = null;
 	
-	public Parser(Lexer lexer) throws IOException {
+	public Parser(Lexer lexer, JTextArea terminal) throws IOException {
 		this.lexer = lexer;
+		this.terminal = terminal;
 		move();
 //		System.out.println(look.lexeme);
 	}
@@ -38,6 +43,9 @@ public class Parser {
 	}
 
 	private void error(String s) {
+		if(terminal != null) {
+			terminal.append("Compiler error near line " + lexer.line + " : " + s + "\n");
+		}
 		throw new Error("Compiler error near line " + lexer.line + " : " + s);
 	}
 

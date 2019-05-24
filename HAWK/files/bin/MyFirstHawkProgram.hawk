@@ -1,0 +1,7 @@
+program MyFirstHawkProgram {
+  void main() {
+
+	println "Hello, Universe"
+    exit;	
+  }
+}

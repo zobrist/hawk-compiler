@@ -1,0 +1,6 @@
+program Samp {
+  void main() {
+    println "samp"
+    exit;
+  }
+}
