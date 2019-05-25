@@ -13,7 +13,8 @@ import java.awt.event.MouseEvent;
  */
 public class JTabbedPaneCloseButton extends JTabbedPane {
 
-    public JTabbedPaneCloseButton() {
+	private static final long serialVersionUID = 1L;
+	public JTabbedPaneCloseButton() {
         super();
     }
 
@@ -50,7 +51,9 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
 
     /* Button */
     public class CloseButtonTab extends JPanel {
-        private Component tab;
+    	
+		private static final long serialVersionUID = 1L;
+		private Component tab;
 
         public CloseButtonTab(final Component tab, String title, Icon icon) {
             this.tab = tab;
@@ -62,6 +65,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
             add(jLabel);
             JButton button = new JButton(MetalIconFactory.getInternalFrameCloseIcon(16));
             button.setMargin(new Insets(0, 0, 0, 0));
+            button.setPreferredSize(new Dimension(20, 20));
             button.addMouseListener(new CloseListener(tab));
             add(button);
         }

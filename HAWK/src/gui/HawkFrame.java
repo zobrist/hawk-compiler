@@ -22,12 +22,12 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
+//import javax.swing.text.StyledDocument;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.TabSet;
-import javax.swing.text.TabStop;
+//import javax.swing.text.TabSet;
+//import javax.swing.text.TabStop;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -47,7 +47,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+//import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -69,11 +69,13 @@ import hawkcompiler.HawkCompiler;
 
 public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeExpansionListener*/ {
 
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel mainPanel;
 	// private JPanel fileTreePanel;
 
-	private JTextArea textArea = new JTextArea();
-	private JTextArea textArea2 = new JTextArea();
+//	private JTextArea textArea = new JTextArea();
+	private JTextArea terminal = new JTextArea();
 
 	private JTextPane textPane;
 
@@ -96,20 +98,20 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 
 	private JTree tree;
 
-	private JMenuBar mb1 = new JMenuBar();
+	private JMenuBar menuBar1 = new JMenuBar();
 	private JMenu fileMenu = new JMenu("FILE");
-	private JMenuItem i1 = new JMenuItem("NEW");
-	private JMenuItem i2 = new JMenuItem("OPEN");
-	private JMenuItem i3 = new JMenuItem("SAVE");
-	private JMenuItem i4 = new JMenuItem("CLOSE");
-	private JMenuItem i5 = new JMenuItem("NEW");
+	private JMenuItem newItem = new JMenuItem("NEW");
+	private JMenuItem openItem = new JMenuItem("OPEN");
+	private JMenuItem saveItem = new JMenuItem("SAVE");
+	private JMenuItem closeItem = new JMenuItem("CLOSE");
+//	private JMenuItem i5 = new JMenuItem("NEW");
 
 
-	private JMenuBar mb2 = new JMenuBar();
+//	private JMenuBar menuBar2 = new JMenuBar();
 	private JMenu programMenu = new JMenu("PROGRAM");
 	// private JMenuItem j1 = new JMenuItem("COMPILE");
-	private JMenuItem j2 = new JMenuItem("RUN");
-	private JMenuItem j3 = new JMenuItem("TERMINATE");
+	private JMenuItem runItem = new JMenuItem("RUN");
+	private JMenuItem terminateItem = new JMenuItem("TERMINATE");
 
 	private HashMap<String, File> filenameToFileMap = new HashMap<String, File>();
 
@@ -182,7 +184,9 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 	    
 	    DefaultStyledDocument doc = new DefaultStyledDocument() {
 
-	        public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
+			private static final long serialVersionUID = 1L;
+
+			public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
 
 	        	// if(str.contains("("))
 	         //    	super.insertString(offset, str + ")", a);
@@ -251,7 +255,7 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 	    	textPane = new JTextPane(doc);
 	    	textPane.setBackground(new Color(20, 20, 20));
 	    	textPane.setForeground(new Color(240, 240, 240));
-	    	textPane.setFont(new Font("Consolas", Font.PLAIN, 20));
+	    	textPane.setFont(new Font("Consolas", Font.PLAIN, 18));
 	    	textPane.setCaretColor(new Color(240, 240, 240));
 
 	    	UIManager.setLookAndFeel(previousLookAndFeel);
@@ -313,44 +317,44 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 
 	public void addMenu() {
 
-		fileMenu.add(i1);
-		fileMenu.add(i2);
-		fileMenu.add(i3);
-		fileMenu.add(i4);
-		mb1.add(fileMenu);
+		fileMenu.add(newItem);
+		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
+		fileMenu.add(closeItem);
+		menuBar1.add(fileMenu);
 
-		mainPanel.add(mb1);
-		mb1.setBounds(0,25, 45,15);
+		mainPanel.add(menuBar1);
+		menuBar1.setBounds(0, 25, 115, 25);
 
-		i2.addActionListener(new ActionListener() {
+		openItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				openFile(false);
 			}
 		});
 
-		i3.addActionListener(new ActionListener() {
+		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				saveFile();
 			}
 		});
 
 
-		i4.addActionListener(new ActionListener() {
+		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				tabbedPane.removeTabAt(1);
 			}
 		});
 
 		// programMenu.add(j1);
-		programMenu.add(j2);
-		programMenu.add(j3);
-		mb2.add(programMenu);
+		programMenu.add(runItem);
+		programMenu.add(terminateItem);
+		menuBar1.add(programMenu);
 
-		j2.addActionListener(new ActionListener() {
+		runItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
 //					System.out.println(openFileString);
-					hawkCompiler.compile("files/bin/" + openFileString, textArea2);
+					hawkCompiler.compile("files/bin/" + openFileString, terminal);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -358,8 +362,8 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 			}
 		});
 
-		mainPanel.add(mb2);
-		mb2.setBounds(46,25, 80,15);
+//		mainPanel.add(menuBar2);
+//		menuBar2.setBounds(46, 25, 80, 25);
 
 		JPanel textEditorPanel = new JPanel(null);
 		textEditorPanel.setBounds(0,0,1366,768);
@@ -371,20 +375,20 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 	public void addConsole() {
 
 		JLayeredPane lp = getLayeredPane();
-		JScrollPane scrollingArea2 = new JScrollPane(textArea2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollingArea2 = new JScrollPane(terminal, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		scrollingArea2.setBounds(926,80,435,682);
-		textArea2.setBackground(new Color(20,20,20));
-		textArea2.setEditable(false);
+		terminal.setBackground(new Color(20,20,20));
+		terminal.setEditable(false);
 		lp.add(scrollingArea2);
 
-		DefaultCaret caret = (DefaultCaret)textArea2.getCaret();
+		DefaultCaret caret = (DefaultCaret)terminal.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-		textArea2.setFont(new Font("Consolas", Font.PLAIN, 15));
-		textArea2.setForeground(new Color(240,240,240));
+		terminal.setFont(new Font("Consolas", Font.PLAIN, 15));
+		terminal.setForeground(new Color(240,240,240));
 
-		textArea2.append("Hawk Programming Console [Version 1.0]\n(c) 2018 Seven Deadly Sins. All rights reserved.\n\n");
+		terminal.append("Hawk Programming Console [Version 1.0]\n(c) 2018 Seven Deadly Sins. All rights reserved.\n\n");
 	}
  
 	private class MouseListener extends MouseAdapter {
@@ -424,7 +428,7 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 				}
 
 				if (node.isLeaf()) {
-					textArea2.append("\nleaf");
+					terminal.append("\nleaf");
 				}
 			}*/
 
@@ -619,8 +623,8 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 		int choice = fileChooser.showSaveDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = fileChooser.getSelectedFile();
-			// textArea2.append("\n Saved at: " + chosenFile.getAbsolutePath());
-			// textArea2.append("\n File exists? " + chosenFile.exists());
+			// terminal.append("\n Saved at: " + chosenFile.getAbsolutePath());
+			// terminal.append("\n File exists? " + chosenFile.exists());
 
 			if (!chosenFile.exists()) {
 				chosenFile = new File(chosenFile.getAbsolutePath());
@@ -662,7 +666,7 @@ public class HawkFrame extends JFrame implements TreeSelectionListener/*, TreeEx
 			String fileName = (String)nodeInfo;
 
 			for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-				// textArea2.append("\n" + fileName + " | " + tabbedPane.getTitleAt(i));
+				// terminal.append("\n" + fileName + " | " + tabbedPane.getTitleAt(i));
 				if (fileName.equals(tabbedPane.getTitleAt(i))) {
 					tabbedPane.setSelectedIndex(i);
 					break;
