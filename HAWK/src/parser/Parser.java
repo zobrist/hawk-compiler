@@ -446,6 +446,14 @@ public class Parser {
 			expression();
 		}else if(look.tag == Tag.STRING_TYPE) {
 			assignment_string_params();
+		}else if(look.tag == Tag.ID) {
+			
+			move();
+			if(look.tag == '+') {
+				move();
+				assignment_params();
+			}
+			
 		}
 	}
 	
