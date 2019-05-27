@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.swing.JTextArea;
 
 import lexer.Lexer;
+import lexer.Num;
+import lexer.Real;
 import lexer.Tag;
 import lexer.Token;
 
@@ -31,17 +33,19 @@ public class Parser {
 			error("Syntax Error: identifier greater than 32 characters");
 		}
 		System.out.println(look.lexeme);
+		terminal.append(look.lexeme + "\n");
 	}
 
 	private void match(int t) throws IOException {
 		if(look.tag == t) {
 			move();
 		} else {
+			System.out.println("Syntax Error. Dapat di na napatuloy kun may error");
 			error("Syntax Error");
 		}
 		//System.out.println(look.lexeme);
 	}
-
+	
 	private void error(String s) {
 		if(terminal != null) {
 			terminal.append("Compiler error near line " + lexer.line + " : " + s + "\n");
@@ -80,12 +84,12 @@ public class Parser {
 		match('}');
 	}
 	
-	private void method_declaration() throws IOException{
-		match('(');
-		method_params();
-		match(')');
-		block();
-	}
+//	private void method_declaration() throws IOException{
+//		match('(');
+//		method_params();
+//		match(')');
+//		block();
+//	}
 	
 	private void block() throws IOException {
 		if(look.tag == '{') {
@@ -99,16 +103,16 @@ public class Parser {
 		//match('}');
 	}
 	
-	private void method_params() throws IOException {
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			move(); //to skip the data_type symbol
-			match(Tag.ID);
-			if(look.tag == ','){
-				move();
-				method_params();
-			}
-		}
-	}
+//	private void method_params() throws IOException {
+//		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
+//			move(); //to skip the data_type symbol
+//			match(Tag.ID);
+//			if(look.tag == ','){
+//				move();
+//				method_params();
+//			}
+//		}
+//	}
 	
 	
 	private void declarations() throws IOException{
@@ -143,29 +147,32 @@ public class Parser {
 		}
 	}
 	
-	private void declaration() throws IOException {
-		move(); //to skip the , symbol
-		match(Tag.ID);
-		
-		if(look.tag == ','){
-			declaration();
-		}else if(look.tag == ';'){
-			move();
-			declaration();
-		}else if(look.tag == '=') {
-			assignment();
-		}
-	}
+//	private void declaration() throws IOException {
+//		move(); //to skip the , symbol
+//		match(Tag.ID);
+//		
+//		if(look.tag == ','){
+//			declaration();
+//		}else if(look.tag == ';'){
+//			move();
+//			declaration();
+//		}else if(look.tag == '=') {
+//			assignment();
+//		}
+//	}
 	
 	private void statements() throws IOException {
 		
 		if(look.tag == '}') {
-			match('}');
+//			match('}');
 			return;
-		} else {
+		}else if(look.tag == Tag.RETURN) {
+			return;
+		}else {
 			statement();
 			statements();
 		}
+		
 	}
 	
 	private void statement() throws IOException {
@@ -195,13 +202,13 @@ public class Parser {
 		case Tag.NUM:
 		case Tag.STRING_TYPE:
 		case Tag.REAL:
-			declarations();
+			declaration();
 			return;
 		case Tag.PRINT:
 			print();
 			return;
-		case Tag.GET:
-			get();
+		case Tag.ID:
+			method_call();
 			return;
 //		case Tag.ME:
 //			repeat_statement();
@@ -224,6 +231,19 @@ public class Parser {
 		
 	}
 	
+	private void declaration() throws IOException {
+		if(isDataType(look.tag)){
+			move();
+			match(Tag.ID);
+			if(look.tag == '=') {
+				assignment();
+			}else if(look.tag == ';'){
+				match(';');
+			}
+			declaration();
+		}
+	}
+	
 	//needs to be checked pa
 	private void method_call() throws IOException{
 		if(look.tag == Tag.ID) {
@@ -236,37 +256,90 @@ public class Parser {
 		}
 	}
 	
-	private void print_params() throws IOException{
+	private void return_statement() throws IOException{
+		match(Tag.RETURN);
+		if(look.tag != ';') {
+			expression();
+		}
+		match(';');
+		
+	}
+	
+	private void method_declaration() throws IOException{
+		
+		if(look.tag == Tag.VOID) {
+			move();
+			match(Tag.ID);
+			match('(');
+			if(look.tag != ')') {
+				method_params();
+			}
+			match(')');
+			block();
+		}else if(isDataType(look.tag)) {
+			move();
+			match(Tag.ID);
+			match('(');
+			if(look.tag != ')') {
+				method_params();
+			}
+			match(')');
+			match('{');
+			statements();
+			
+			return_statement();
+			match('}');
+		}else if(look.tag == '(') {
+			move();
+			if(look.tag != ')') {
+				method_params();
+			}
+			match(')');
+			match('{');
+			
+			statements();
+			return_statement();
+			
+			match('}');
+		}
+	}
+	
+	private void method_params() throws IOException{
+		if(isDataType(look.tag)) {
+			move();
+			match(Tag.ID);
+			move();
+			if(look.tag == ',') {
+				move();
+				method_params();
+			}else {
+				move();
+			}
+		}else {
+			error("Syntax Error");
+		}
+	}
+	
+	private void print_or_string_params() throws IOException{
 		if(look.tag == Tag.STRING_TYPE) {
 			move();
 			if(look.tag == '+') {
-				print_params();
+				move();
+				print_or_string_params();
 			}
-		}else {
-			expression();
+		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
+			move();
 			if(look.tag == '+') {
-				print_params();
+				move();
+				print_or_string_params();
 			}
 		}
 	}
 	
 	private void print() throws IOException{
-		if(look.tag == Tag.PRINT) {
-			move();
-			print_params();
-			match(';');
-		}
-	}
-	
-	private void get() throws IOException{
-		if(look.tag == Tag.GET) {
-			move();
-			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.STRING_TYPE) {
-				match(';');
-			}else {
-				error("Syntax Error");
-			}
-		}
+		move();
+		print_or_string_params();
+		match(';');
 	}
 	
 	private void for_loop() throws IOException {
@@ -397,7 +470,7 @@ public class Parser {
 			if(look.tag == Tag.AND ||look.tag == Tag.OR){
 				move();
 				condition();
-			}																	//kulang pa hin kun boolean an iya gininput
+			}														//kulang pa hin kun boolean an iya gininput
 			if(parenthesis){
 				match(')');
 				parenthesis = false;
@@ -410,7 +483,7 @@ public class Parser {
 				conditional_operators();
 				condition();
 			}
-		}																//kulang pa hin kun boolean an iya gininput
+		}															//kulang pa hin kun boolean an iya gininput
 	}
 	
 	public void conditional_operators() throws IOException{
@@ -442,15 +515,34 @@ public class Parser {
 			type();
 			match(Tag.ID);
 			match('=');
-			expression();
+			assignment_params();
 			match(';');
 		}else{
-//			match(Tag.ID);
 			match('=');
-			expression();
+			assignment_params();
 			match(';');
+		}	
+	}
+	
+	public void assignment_params() throws IOException{
+		if(look instanceof Num || look instanceof Real) {
+			expression();
+		}else if(look.tag == Tag.STRING_TYPE) {
+			assignment_string_params();
 		}
-		
+	}
+	
+	public void assignment_string_params() throws IOException{
+		if(look.tag == Tag.STRING_TYPE) {
+			move();
+			if(look.tag == '+') {
+				 move();
+				 assignment_string_params();
+			}
+		}else if(look instanceof Num || look instanceof Real){
+			move();
+			return;
+		}
 	}
 	
 	public void repeat_statement() throws IOException{
@@ -481,7 +573,7 @@ public class Parser {
 				move();
 				expression();
 			}
-		} else {
+		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
 			move();
 			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
 				move();
@@ -517,20 +609,18 @@ public class Parser {
 	
 	public void scan_statement() throws IOException {
 		match(Tag.GET);
-		switch(look.tag)
-		{
-			case Tag.BASIC_TYPE:
-				return;
-			case Tag.NUM:
-				return;
-			case Tag.REAL:
-				return;
-			case Tag.STRING_TYPE:
-				return;
-			default:
-				error("Syntax error");
-				
+		if(isDataType(look.tag)) {
+			match(';');
+		}else {
+			error("Syntax Error");
 		}
+	}
+	
+	public boolean isDataType(int tag) {
+		if(tag == Tag.BASIC_TYPE || tag == Tag.NUM || tag == Tag.REAL || tag == Tag.STRING_TYPE) {
+			return true;
+		}
+		return false;
 	}
 	
 	/*private void type() throws IOException {

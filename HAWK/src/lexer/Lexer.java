@@ -188,6 +188,10 @@ public class Lexer {
 				return new Keyword(s, Tag.PRINT);
 			}else if(s.equals("get")) {
 				return new Keyword(s, Tag.GET);
+			}else if(s.equals("void")) {
+				return new Keyword(s, Tag.VOID);
+			}else if(s.equals("return")) {
+				return new Keyword(s, Tag.RETURN);
 			}else {
 				return new Keyword(s, Tag.ID);				
 			}
