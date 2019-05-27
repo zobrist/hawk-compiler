@@ -74,8 +74,7 @@ public class Parser {
 		}else {
 			statement();
 			statements();
-		}
-		
+		}	
 	}
 	
 	private void statement() throws IOException {
@@ -113,6 +112,12 @@ public class Parser {
 		case Tag.ID:
 			method_call();
 			return;
+		case Tag.EXIT:
+			exit_statement();
+			return;
+		case Tag.BREAK:
+			break_statement();
+			return;
 //		case Tag.ME:
 //			repeat_statement();
 //			return;
@@ -131,6 +136,16 @@ public class Parser {
 //			assign();
 		}
 		
+	}
+	
+	private void exit_statement() throws IOException{
+		move();
+		match(';');
+	}
+	
+	private void break_statement() throws IOException{
+		move();
+		match(';');
 	}
 	
 	private void declaration() throws IOException {
@@ -516,6 +531,7 @@ public class Parser {
 		}
 		return false;
 	}
+	
 	
 	/*private void type() throws IOException {
 		match(Tag.BASIC_TYPE);
