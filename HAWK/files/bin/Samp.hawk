@@ -1,6 +1,11 @@
-program Samp {
-  void main() {
-    println "samp"
-    exit;
-  }
+program Hawk{
+
+	string bea = "" + 24;
+	void bea(){
+		lol();
+	}
+	
+	string lol(){
+		return 1;
+	}
 }
