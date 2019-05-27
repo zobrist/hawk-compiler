@@ -13,17 +13,13 @@ import lexer.Token;
 public class Parser {
 	private final Lexer lexer;
 	private Token look;
-
-	private boolean EOFEncountered = false;
-	private boolean mainEncountered = false;
 	
 	private JTextArea terminal = null;
-	
+
 	public Parser(Lexer lexer, JTextArea terminal) throws IOException {
 		this.lexer = lexer;
 		this.terminal = terminal;
 		move();
-//		System.out.println(look.lexeme);
 	}
 
 	private void move() throws IOException {
@@ -33,7 +29,6 @@ public class Parser {
 			error("Syntax Error: identifier greater than 32 characters");
 		}
 		System.out.println(look.lexeme);
-		terminal.append(look.lexeme + "\n");
 	}
 
 	private void match(int t) throws IOException {
@@ -43,14 +38,13 @@ public class Parser {
 			System.out.println("Syntax Error. Dapat di na napatuloy kun may error");
 			error("Syntax Error");
 		}
-		//System.out.println(look.lexeme);
 	}
 	
 	private void error(String s) {
+//		throw new Error("near line " + lexer.line + " : " + s);
 		if(terminal != null) {
 			terminal.append("Compiler error near line " + lexer.line + " : " + s + "\n");
 		}
-		throw new Error("Compiler error near line " + lexer.line + " : " + s);
 	}
 
 	public void start() throws IOException {
@@ -60,111 +54,29 @@ public class Parser {
 	private void program() throws IOException {
 		match(Tag.PROGRAM);
 		match(Tag.ID);
-		body();
-	}
-	
-	private void body() throws IOException{
-		boolean isExit = false;
 		match('{');
-		while(true)
-		{
-			if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE)
-				declarations();
-				
-			else if(look.tag == Tag.VOID) {
-				method_declaration();
-			}
-			else {
-				break;
-			}
-			if(EOFEncountered || isExit) {
-				break;
-			}
-		}
+		body();
 		match('}');
 	}
 	
-//	private void method_declaration() throws IOException{
-//		match('(');
-//		method_params();
-//		match(')');
-//		block();
-//	}
+	private void body() throws IOException{
+		
+		declaration();
+		method_declaration();
+		if(look.tag != '}') {
+			body();
+		}
+		
+	}
 	
 	private void block() throws IOException {
-		if(look.tag == '{') {
-			match('{');
-			block();
-		} else if(look.tag == '}') {
-			return;
-		} else {
-			statements();
-		}
-		//match('}');
+		match('{');
+		statements();
+		match('}');
 	}
-	
-//	private void method_params() throws IOException {
-//		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-//			move(); //to skip the data_type symbol
-//			match(Tag.ID);
-//			if(look.tag == ','){
-//				move();
-//				method_params();
-//			}
-//		}
-//	}
-	
-	
-	private void declarations() throws IOException{
-		if(look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BASIC_TYPE || look.tag == Tag.STRING_TYPE){
-			int type = look.tag;
-			//System.out.println("Type Lexeme: " + look.lexeme);
-			move(); //should be something that records datatypes
-			String prevLexeme = look.lexeme;
-			match(Tag.ID); //should be something that records names
-			if(prevLexeme.equals("main")) {
-				if(type == Tag.BASIC_TYPE && mainEncountered){
-					error("int main method already invoked!");
-				} else {
-					mainEncountered = true;
-				}
-			}
-		}//else if (look.tag == Tag.ID) {
-		//	match(Tag.ID);
-		//} this should not be possible
-		
-		if(look.tag == '='){
-			assignment();
-		}else if(look.tag == ','){
-			declaration();
-		}else if(look.tag == '(') {
-			method_declaration();
-		}else if(look.tag == ';'){
-			move();
-		}else{
-			EOFEncountered = true;
-			return;
-		}
-	}
-	
-//	private void declaration() throws IOException {
-//		move(); //to skip the , symbol
-//		match(Tag.ID);
-//		
-//		if(look.tag == ','){
-//			declaration();
-//		}else if(look.tag == ';'){
-//			move();
-//			declaration();
-//		}else if(look.tag == '=') {
-//			assignment();
-//		}
-//	}
 	
 	private void statements() throws IOException {
-		
 		if(look.tag == '}') {
-//			match('}');
 			return;
 		}else if(look.tag == Tag.RETURN) {
 			return;
@@ -230,7 +142,6 @@ public class Parser {
 //			block();
 //			return;
 		default:
-			return;
 //			assign();
 		}
 		
@@ -579,16 +490,8 @@ public class Parser {
 	
 	public void expression() throws IOException{
 		
-		if(look.tag == '\'') {
-			move();
-			match(Tag.ID);
-			move();
-		}else if(look.tag == '\"'){
-			//System.out.println("qwertyui");
-			match('\"');
-			match(Tag.ID);
-			match('\"');
-		} else if(look.tag == '('){
+		if(look.tag == '('){
+		
 			move();
 			expression();
 			match(')');
