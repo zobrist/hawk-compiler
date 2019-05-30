@@ -9,16 +9,19 @@ import lexer.Num;
 import lexer.Real;
 import lexer.Tag;
 import lexer.Token;
+import semantics.Semantics;
 
 public class Parser {
 	private final Lexer lexer;
 	private Token look;
+	private Semantics semantics;
 	
 	private JTextArea terminal = null;
 
-	public Parser(Lexer lexer, JTextArea terminal) throws IOException {
+	public Parser(Lexer lexer, JTextArea terminal, Semantics semantics) throws IOException {
 		this.lexer = lexer;
 		this.terminal = terminal;
+		this.semantics = semantics;
 		move();
 	}
 
@@ -29,10 +32,12 @@ public class Parser {
 			error("Syntax Error: identifier greater than 32 characters");
 		}
 		System.out.println(look.lexeme);
+		terminal.append(look.lexeme + "\n");
 	}
 
 	private void match(int t) throws IOException {
 		if(look.tag == t) {
+//			terminal.append(" from here! ");
 			move();
 		} else {
 			System.out.println("Syntax Error. Dapat di na napatuloy kun may error");
@@ -159,11 +164,18 @@ public class Parser {
 	
 	private void declaration() throws IOException {
 		if(isDataType(look.tag)){
+//			semantics.clearArrayListTokenContents();
+			semantics.initializationCheck(look, lexer);
 			move();
+//			System.out.print(" HERE ");
+//			terminal.append(" HERE ");
+			semantics.duplicateCheck(look.lexeme, lexer);
+			semantics.initializationCheck(look, lexer);
 			match(Tag.ID);
 			if(look.tag == '=') {
 				assignment();
 			}else if(look.tag == ';'){
+				semantics.initializationCheck(look, lexer);
 				match(';');
 			}
 			declaration();
@@ -442,10 +454,12 @@ public class Parser {
 			match(Tag.ID);
 			match('=');
 			assignment_params();
+			semantics.initializationCheck(look, lexer);
 			match(';');
 		}else{
 			match('=');
 			assignment_params();
+			semantics.initializationCheck(look, lexer);
 			match(';');
 		}	
 	}
@@ -456,8 +470,10 @@ public class Parser {
 		}else if(look.tag == Tag.STRING_TYPE) {
 			assignment_string_params();
 		}else if(look.tag == Tag.ID) {
-			
+			semantics.existenceCheck(look, lexer);
+//			semantics.initializationCheck(look, lexer);
 			move();
+//			semantics.initializationCheck(look, lexer);
 			if(look.tag == '+') {
 				move();
 				assignment_params();
@@ -467,6 +483,7 @@ public class Parser {
 	}
 	
 	public void assignment_string_params() throws IOException{
+		semantics.initializationCheck(look, lexer);
 		if(look.tag == Tag.STRING_TYPE) {
 			move();
 			if(look.tag == '+') {
@@ -491,7 +508,6 @@ public class Parser {
 	public void expression() throws IOException{
 		
 		if(look.tag == '('){
-		
 			move();
 			expression();
 			match(')');
@@ -500,8 +516,9 @@ public class Parser {
 				expression();
 			}
 		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
+			semantics.initializationCheck(look, lexer);
 			move();
-			if(look.tag == '+' ||look.tag == '-'||look.tag == '*'||look.tag == '/'||look.tag == '%'){
+			if(look.tag == '+' || look.tag == '-' || look.tag == '*' || look.tag == '/' || look.tag == '%'){
 				move();
 				expression();
 			}

@@ -43,7 +43,6 @@ public class Lexer {
 		reserve(Keyword.PROGRAM);
 		reserve(Keyword.NIL);
 		reserve(Keyword.FUNC);
-		reserve(Keyword.VOID);
 	}
 	
 	public Lexer() {
@@ -200,27 +199,9 @@ public class Lexer {
 		if(peek == '\"') {
 			StringBuilder b = new StringBuilder();
 			do {
-				if(peek == '\"') {
-					read();
-				}
 				b.append(peek);
-				
 				read();
 			} while(peek != '\"');
-			read();
-			String s = b.toString();
-			return new Token(Tag.STRING_TYPE, s);
-		}
-		
-		if(peek == '\'') {
-			StringBuilder b = new StringBuilder();
-			do {
-				if(peek == '\'') {
-					read();
-				}
-				b.append(peek);
-				read();
-			} while(peek != '\'');
 			read();
 			String s = b.toString();
 			return new Token(Tag.STRING_TYPE, s);

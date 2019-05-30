@@ -8,13 +8,15 @@ import javax.swing.JTextArea;
 
 import lexer.Lexer;
 import parser.Parser;
+import semantics.Semantics;
 
 public class HawkCompiler {
 	
 	public static void main(String[] args) throws IOException {
 		System.setIn(new FileInputStream(new File(args[0])));
 		Lexer lexer = new Lexer();
-		Parser parser = new Parser(lexer, null);
+		Semantics semantics = new Semantics(null);
+		Parser parser = new Parser(lexer, null, semantics);
 		parser.start();
 	}
 	
@@ -22,7 +24,8 @@ public class HawkCompiler {
 		
 		System.setIn(new FileInputStream(new File(filename)));
 		Lexer lexer = new Lexer();
-		Parser parser = new Parser(lexer, terminal);
+		Semantics semantics = new Semantics(terminal);
+		Parser parser = new Parser(lexer, terminal, semantics);
 //		terminal.append("You called?\n");
 		parser.start();
 	}

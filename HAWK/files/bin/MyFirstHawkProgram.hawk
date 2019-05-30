@@ -1,7 +1,7 @@
-program MyFirstHawkProgram {
-  void main() {
-
-	println "Hello, Universe"
-    exit;	
-  }
-}
+program MyFirstHawkProgram { 
+  int i = 5;
+  int g = i;
+  float h = i;
+  int i = 2;
+} 
+ 

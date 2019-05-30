@@ -11,8 +11,8 @@ public class Type extends Keyword {
 		this.width = width;
 	}
 	
-	public static Type INT = new Type("int", Tag.BASIC_TYPE, 4);
-	public static Type FLOAT = new Type("float", Tag.BASIC_TYPE, 8);
+	public static Type INT = new Type("int", Tag.NUM, 4);
+	public static Type FLOAT = new Type("float", Tag.REAL, 8);
 	public static Type CHAR = new Type("char", Tag.BASIC_TYPE, 1);
 	public static Type BOOLEAN = new Type("boolean", Tag.BASIC_TYPE, 1);
 	
