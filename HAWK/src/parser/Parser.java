@@ -32,7 +32,9 @@ public class Parser {
 			error("Syntax Error: identifier greater than 32 characters");
 		}
 		System.out.println(look.lexeme);
-		terminal.append(look.lexeme + "\n");
+		if (terminal != null) {
+			terminal.append(look.lexeme + "\n");
+		}
 	}
 
 	private void match(int t) throws IOException {
@@ -48,7 +50,7 @@ public class Parser {
 	private void error(String s) {
 //		throw new Error("near line " + lexer.line + " : " + s);
 		if(terminal != null) {
-			terminal.append("Compiler error near line " + lexer.line + " : " + s + "\n");
+			terminal.append("Compiler error near line " + Lexer.line + " : " + s + "\n");
 		}
 	}
 
@@ -66,7 +68,9 @@ public class Parser {
 	
 	private void body() throws IOException{
 		
+		Token previousLook = look;
 		declaration();
+		look = previousLook;
 		method_declaration();
 		if(look.tag != '}') {
 			body();
@@ -165,17 +169,17 @@ public class Parser {
 	private void declaration() throws IOException {
 		if(isDataType(look.tag)){
 //			semantics.clearArrayListTokenContents();
-			semantics.initializationCheck(look, lexer);
+			semantics.initializationCheck(look);
 			move();
 //			System.out.print(" HERE ");
 //			terminal.append(" HERE ");
-			semantics.duplicateCheck(look.lexeme, lexer);
-			semantics.initializationCheck(look, lexer);
+			semantics.duplicateCheck(look.lexeme);
+			semantics.initializationCheck(look);
 			match(Tag.ID);
 			if(look.tag == '=') {
 				assignment();
 			}else if(look.tag == ';'){
-				semantics.initializationCheck(look, lexer);
+				semantics.initializationCheck(look);
 				match(';');
 			}
 			declaration();
@@ -194,9 +198,10 @@ public class Parser {
 		}
 	}
 	
-	private void return_statement() throws IOException{
+	private void return_statement(int methodTypeTag) throws IOException{
 		match(Tag.RETURN);
 		if(look.tag != ';') {
+			semantics.returnTypeCheck(look, methodTypeTag);
 			expression();
 		}
 		match(';');
@@ -205,8 +210,12 @@ public class Parser {
 	
 	private void method_declaration() throws IOException{
 		
+//		System.out.println(isDataType(look.tag) + " " + look.tag + " " + look.lexeme);
+//		error(isDataType(look.tag) + " " + look.tag + " " + look.lexeme);
 		if(look.tag == Tag.VOID) {
+			semantics.methodDeclaration(look);
 			move();
+			semantics.methodDeclaration(look);
 			match(Tag.ID);
 			match('(');
 			if(look.tag != ')') {
@@ -215,7 +224,12 @@ public class Parser {
 			match(')');
 			block();
 		}else if(isDataType(look.tag)) {
+//			System.out.println(" HERE ");
+//			error(" HERE ");
+			int methodTypeTag = look.tag;
+			semantics.methodDeclaration(look);
 			move();
+			semantics.methodDeclaration(look);
 			match(Tag.ID);
 			match('(');
 			if(look.tag != ')') {
@@ -225,9 +239,11 @@ public class Parser {
 			match('{');
 			statements();
 			
-			return_statement();
+			return_statement(methodTypeTag);
 			match('}');
 		}else if(look.tag == '(') {
+//			System.out.println(look.lexeme + " |");
+//			error(look.lexeme + " |");
 			move();
 			if(look.tag != ')') {
 				method_params();
@@ -236,7 +252,7 @@ public class Parser {
 			match('{');
 			
 			statements();
-			return_statement();
+			return_statement(Tag.STRING_TYPE);
 			
 			match('}');
 		}
@@ -454,23 +470,24 @@ public class Parser {
 			match(Tag.ID);
 			match('=');
 			assignment_params();
-			semantics.initializationCheck(look, lexer);
+			semantics.initializationCheck(look);
 			match(';');
 		}else{
 			match('=');
 			assignment_params();
-			semantics.initializationCheck(look, lexer);
+			semantics.initializationCheck(look);
 			match(';');
 		}	
 	}
 	
 	public void assignment_params() throws IOException{
 		if(look instanceof Num || look instanceof Real) {
+			semantics.initializationCheck(look);
 			expression();
 		}else if(look.tag == Tag.STRING_TYPE) {
 			assignment_string_params();
 		}else if(look.tag == Tag.ID) {
-			semantics.existenceCheck(look, lexer);
+			semantics.existenceCheck(look);
 //			semantics.initializationCheck(look, lexer);
 			move();
 //			semantics.initializationCheck(look, lexer);
@@ -483,7 +500,7 @@ public class Parser {
 	}
 	
 	public void assignment_string_params() throws IOException{
-		semantics.initializationCheck(look, lexer);
+		semantics.initializationCheck(look);
 		if(look.tag == Tag.STRING_TYPE) {
 			move();
 			if(look.tag == '+') {
@@ -516,7 +533,6 @@ public class Parser {
 				expression();
 			}
 		}else if(look instanceof Num || look instanceof Real || look.tag == Tag.ID){
-			semantics.initializationCheck(look, lexer);
 			move();
 			if(look.tag == '+' || look.tag == '-' || look.tag == '*' || look.tag == '/' || look.tag == '%'){
 				move();

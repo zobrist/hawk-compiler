@@ -2,11 +2,13 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
 
 public class BackgroundPanel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String string;
 	public BackgroundPanel(String s){
 	  	this.string = s;

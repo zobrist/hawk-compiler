@@ -1,7 +1,6 @@
-program MyFirstHawkProgram { 
-  int i = 5;
-  int g = i;
-  float h = i;
-  int i = 2;
-} 
- 
+program Hawk{
+
+	int main (int i, float f, string s){
+		return 10;
+	}
+}

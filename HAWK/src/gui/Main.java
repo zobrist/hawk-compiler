@@ -3,11 +3,6 @@ package gui;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.JWindow;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
-import javax.swing.JLabel;
-import java.awt.Color;
 
 public class Main {
 	public static void main(String[] args) {
