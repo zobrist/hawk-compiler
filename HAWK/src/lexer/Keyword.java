@@ -23,7 +23,9 @@ public class Keyword extends Token {
 	public static final Keyword LE = new Keyword("<=", Tag.LE),
 			GE = new Keyword(">=", Tag.GE),
 			EQUAL = new Keyword("==", Tag.EQUAL),
-			NOTEQUAL = new Keyword("!=", Tag.NOTEQUAL);
+			NOTEQUAL = new Keyword("!=", Tag.NOTEQUAL),
+			LESS = new Keyword("<", Tag.LESS),
+			GREATER = new Keyword(">", Tag.GREATER);
 	
 	//conditional statements
 	public static final Keyword IF = new Keyword("if", Tag.IF),

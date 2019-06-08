@@ -70,7 +70,6 @@ public class Parser {
 		
 		Token previousLook = look;
 		declaration();
-		look = previousLook;
 		method_declaration();
 		if(look.tag != '}') {
 			body();
@@ -190,11 +189,16 @@ public class Parser {
 	private void method_call() throws IOException{
 		if(look.tag == Tag.ID) {
 			move();
-			match('(');
-			if(look.tag == Tag.ID) {
-				param_ids();
+			
+			if(look.tag == '=') {
+				assignment();
+			}else {
+				match('(');
+				if(look.tag == Tag.ID) {
+					param_ids();
+				}
+				match(')');
 			}
-			match(')');
 		}
 	}
 	
@@ -209,7 +213,6 @@ public class Parser {
 	}
 	
 	private void method_declaration() throws IOException{
-		
 //		System.out.println(isDataType(look.tag) + " " + look.tag + " " + look.lexeme);
 //		error(isDataType(look.tag) + " " + look.tag + " " + look.lexeme);
 		if(look.tag == Tag.VOID) {
@@ -224,8 +227,6 @@ public class Parser {
 			match(')');
 			block();
 		}else if(isDataType(look.tag)) {
-//			System.out.println(" HERE ");
-//			error(" HERE ");
 			int methodTypeTag = look.tag;
 			semantics.methodDeclaration(look);
 			move();
@@ -242,8 +243,6 @@ public class Parser {
 			return_statement(methodTypeTag);
 			match('}');
 		}else if(look.tag == '(') {
-//			System.out.println(look.lexeme + " |");
-//			error(look.lexeme + " |");
 			move();
 			if(look.tag != ')') {
 				method_params();
@@ -301,9 +300,10 @@ public class Parser {
 			move();
 			match('(');
 			assignment();
-			match(';');
 			condition();
 			match(';');
+			match(Tag.ID);
+			match('=');
 			expression();
 			match(')');
 			block();
@@ -349,27 +349,24 @@ public class Parser {
 	}
 
 	private void elsif_statements() throws IOException{
+		match(Tag.ELSIF);
+		move();
+		match('(');
+		condition();
+		match(')');
+		block();
 		if(look.tag == Tag.ELSIF){
-			move();
-			match('(');
-			condition();
-		//	match(')');
-			block();
-//			match('}');
-			if(look.tag == Tag.ELSIF){
-				elsif_statements();
-			}else if(look.tag == Tag.ELSE){
-				else_statements();
-			}
+			elsif_statements();
+		}else if(look.tag == Tag.ELSE){
+			else_statements();
 		}
 	}
 	
 	
 	private void else_statements() throws IOException{
-		if(look.tag == Tag.ELSE){
-			move();
-			block();
-		}
+		match(Tag.ELSE);
+		move();
+		block();
 	}
 
 	private void incase_statement() throws IOException{
@@ -410,11 +407,11 @@ public class Parser {
 	}
 	
 	public void condition() throws IOException{
-		boolean parenthesis;
+		/*boolean parenthesis;
 		if(look.tag == '('){
 			parenthesis = true;
 			move();
-			expression();
+			expression();						//consider ex. a < (a+2)
 			if(look.tag == ')'){
 				move();
 				parenthesis = false;
@@ -429,23 +426,21 @@ public class Parser {
 				match(')');
 				parenthesis = false;
 			}
-		}else{
+		}else{*/
+		if(look.tag == Tag.TRUE || look.tag == Tag.FALSE) {
+			move();
+		}else {
 			expression();
-			equality_relational();
-			expression();
-			if(look.tag != ')'){
-				conditional_operators();
-				condition();
+			if(is_equality_relational(look.tag)) {			//para pwede na ID la kay malay mo an init niya kay a = true;
+				equality_relational();
+				expression();
 			}
-		}															//kulang pa hin kun boolean an iya gininput
-	}
-	
-	public void conditional_operators() throws IOException{
-		if(look.tag == Tag.AND){
-			match(Tag.AND);
-		}else if(look.tag == Tag.OR){
-			match(Tag.OR);
 		}
+		if(look.tag == Tag.AND || look.tag == Tag.OR) {
+			move();
+			condition();
+		}
+		//}															//kulang pa hin kun boolean an iya gininput
 	}
 	
 	public void equality_relational() throws IOException{
@@ -464,8 +459,25 @@ public class Parser {
 		}
 	}
 	
+	public boolean is_equality_relational(int compare) throws IOException{
+		if(compare == Tag.EQUAL){
+			return true;
+		}else if(compare == Tag.NOTEQUAL){
+			return true;
+		}else if(compare == Tag.GREATER){
+			return true;
+		}else if(compare == Tag.LESS){
+			return true;
+		}else if(compare == Tag.GE){
+			return true;
+		}else if(compare == Tag.LE){
+			return true;
+		}
+		return false;
+	}
+	
 	public void assignment() throws IOException{
-		if(look.tag == Tag.STRING_TYPE || look.tag == Tag.BASIC_TYPE){
+		if(look.tag == Tag.STRING_TYPE || look.tag == Tag.BASIC_TYPE || look.tag == Tag.NUM || look.tag == Tag.REAL || look.tag == Tag.BOOLEAN){
 			type();
 			match(Tag.ID);
 			match('=');
@@ -549,6 +561,8 @@ public class Parser {
 			match(Tag.REAL);
 		}else if(look.tag == Tag.STRING_TYPE){
 			match(Tag.STRING_TYPE);
+		}else if(look.tag == Tag.BOOLEAN) {
+			match(Tag.BOOLEAN);
 		}else{
 			match(Tag.BASIC_TYPE);
 		}
@@ -576,7 +590,7 @@ public class Parser {
 	}
 	
 	public boolean isDataType(int tag) {
-		if(tag == Tag.BASIC_TYPE || tag == Tag.NUM || tag == Tag.REAL || tag == Tag.STRING_TYPE) {
+		if(tag == Tag.BASIC_TYPE || tag == Tag.NUM || tag == Tag.REAL || tag == Tag.STRING_TYPE || tag == Tag.BOOLEAN) {
 			return true;
 		}
 		return false;

@@ -131,13 +131,13 @@ public class Lexer {
 				if(read('=')) {
 					return Keyword.GE;
 				} else {
-					return new Token('>', ">");
+					return Keyword.GREATER;
 				}
 			case '<':
 				if(read('=')) {
 					return Keyword.LE;
 				} else {
-					return new Token('<', "<");
+					return Keyword.LESS;
 				}
 			case '=':
 				if(read('=')) {
@@ -191,6 +191,8 @@ public class Lexer {
 				return new Keyword(s, Tag.VOID);
 			}else if(s.equals("return")) {
 				return new Keyword(s, Tag.RETURN);
+			}else if(s.equals("boolean")) {
+				return new Keyword(s, Tag.BOOLEAN);
 			}else {
 				return new Keyword(s, Tag.ID);				
 			}
@@ -198,7 +200,8 @@ public class Lexer {
 		
 		if(peek == '\"') {
 			StringBuilder b = new StringBuilder();
-			do {
+			read();									//nagbutang ako hini kay nauupod
+			do {									//ha string na nagegenerate an '"'	
 				b.append(peek);
 				read();
 			} while(peek != '\"');

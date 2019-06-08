@@ -44,6 +44,7 @@ public class Tag {
 	public final static int BASIC_TYPE = 404;
 	public final static int ARRAY_TYPE = 405;
 	public final static int STRING_TYPE = 406;
+	public final static int BOOLEAN = 450;
 
 	//arithmetic operators
 	public final static int DIV = 407;
